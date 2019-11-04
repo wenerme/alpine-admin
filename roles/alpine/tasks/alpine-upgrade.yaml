@@ -1,0 +1,14 @@
+- include_tasks: alpine-update.yaml
+- name: version
+  become: true
+  raw: apk version
+  register: raw_result
+  changed_when: no
+- name: upgrade detail
+  debug:
+    var: raw_result.stdout_lines
+  changed_when: no    
+- name: upgrade
+  become: true
+  raw: apk upgrade
+  when: raw_result.stdout_lines | length > 1

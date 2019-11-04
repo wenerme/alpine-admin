@@ -1,0 +1,14 @@
+- name: install nginx
+  become: true
+  apk:
+    name: "{{item}}"
+  loop:
+  - nginx
+  - nginx-mod-stream
+
+- name: enable nginx
+  become: true
+  service:
+    name: nginx
+    state: started
+    enabled: true

@@ -1,0 +1,22 @@
+- name: add rsync
+  become: true
+  apk:
+    name: rsync
+
+- name: sync nginx config for path nginx_conf_path={{nginx_conf_path | default('None')}}
+  become: true
+  synchronize:
+    src: "{{nginx_conf_path}}"
+    dest: /etc/nginx/
+    recursive: true
+  when: "nginx_conf_path is defined and nginx_conf_path is directory"
+  notify: nginx-reload
+
+- name: sync nginx config for host {{inventory_hostname}}
+  become: true
+  synchronize:
+    src: files/{{inventory_hostname}}/nginx/
+    dest: /etc/nginx/
+    recursive: true
+  when: "('files/'+inventory_hostname+'/nginx') is directory"
+  notify: nginx-reload

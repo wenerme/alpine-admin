@@ -1,0 +1,10 @@
+- name: ensure python
+  raw: grep python /etc/apk/world &>/dev/null && echo -n 1 || echo -n 0
+  register: python_exists
+  check_mode: no
+  changed_when: no
+- name: install python
+  raw: sudo apk add python3
+  when: python_exists.stdout == '0'
+- name: Gathering facts
+  setup: {}

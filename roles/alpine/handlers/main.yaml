@@ -1,0 +1,38 @@
+- name: sshd-restart
+  become: true
+  service: name=sshd state=restarted
+- name: sshd-reload
+  become: true
+  service: name=sshd state=reloaded
+
+- name: nginx-reload
+  become: true
+  service: name=nginx state=reloaded
+
+- name: pdns-recursor-restart
+  become: true
+  service: name=pdns-recursor state=restarted
+
+- name: pdns-restart
+  become: true
+  service: name=pdns state=restarted
+
+- name: docker-restart
+  become: true
+  service: name=docker state=restarted
+
+- name: libvirtd-restart
+  become: true
+  service: name=libvirtd state=restarted
+
+- name: libvirtd-reload
+  become: true
+  service: name=libvirtd state=reloaded
+
+- name: openldap-restart
+  become: true
+  service: name=slapd state=restarted
+
+- name: tinc-restart
+  become: true
+  service: name=tincd state=restarted
