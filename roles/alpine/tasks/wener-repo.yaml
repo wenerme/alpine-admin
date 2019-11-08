@@ -4,7 +4,7 @@
     url: https://raw.githubusercontent.com/wenerme/repository/master/alpine/wenermail@gmail.com-59b89cee.rsa.pub
     dest: /etc/apk/keys/wenermail@gmail.com-59b89cee.rsa.pub
     mode: '0644'
-    checsum: sha256:dc26c4333ab21b1f56ed52e9159b2473e93257b98d8efa749ee81676a314e20c
+    checksum: sha256:dc26c4333ab21b1f56ed52e9159b2473e93257b98d8efa749ee81676a314e20c
 
 - name: add repo
   become: true

@@ -21,11 +21,13 @@
     password: '*'
     uid: '1000'
     state: present
-- name: admin use bash
-  become: true
-  user:
-    name: admin
     shell: /bin/bash
+- name: ensure shell
+  become: true
+  lineinfile:
+    path: /etc/passwd
+    line: admin:x:1000:1000:Administrator:/home/admin:/bin/bash
+    regex: '^admin:'
 - name: admin as sudoer
   become: true
   lineinfile:

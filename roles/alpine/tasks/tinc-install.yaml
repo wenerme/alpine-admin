@@ -1,8 +1,10 @@
 - name: install tinc-pre
+  become: true
   apk:
     name: tinc-pre
 
 - name: load modules
+  become: true
   modprobe:
     name: "{{item}}"
     state: present
