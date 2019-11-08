@@ -11,6 +11,8 @@
   - tree
   - rsync
   - htop
+  # 网络
+  - iftop
   # info
   - neofetch
   - util-linux

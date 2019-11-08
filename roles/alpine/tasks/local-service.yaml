@@ -1,0 +1,5 @@
+- name: start local server
+  become: true
+  service:
+    name: local
+    enabled: yes
