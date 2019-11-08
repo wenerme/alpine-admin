@@ -1,0 +1,14 @@
+- name: delete pubkey
+  become: true
+  file:
+    path: '{{item}}'
+    state: absent
+  loop:
+  - /etc/apk/keys/wenermail@gmail.com-59b89cee.rsa.pub
+
+- name: add repo
+  become: true
+  lineinfile:
+    path: /etc/apk/repositories
+    line: https://raw.githubusercontent.com/wenerme/repository/master/alpine/v3.10/community
+    state: absent

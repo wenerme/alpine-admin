@@ -1,3 +1,4 @@
 - name: update
   become: true
   raw: apk update
+  changed_when: no
