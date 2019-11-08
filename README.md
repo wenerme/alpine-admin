@@ -69,9 +69,10 @@ ansible-vault view credentials/admin_rsa.pri | ssh-add -
 # 直接执行单个任务
 ansible-playbook adhoc.yaml -e 'task=setup-base'
 # 限制执行的主机
+# 本地执行 -i localhost
 ansible-playbook adhoc.yaml -e 'task=setup-base' -l dev
 # 任务携带额外参数
-ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=incapp'
+ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=mynet'
 ```
 
 ## 任务说明
@@ -122,3 +123,20 @@ ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=incapp'
 * tinc-install - 安装 tinc-pre
 * tinc-service - 启动 tincd
   * 参数 `tinc_netname` 需要配置在 `/etc/conf.d/tinc.network` 中的网络名
+
+## 本地实验
+
+基于 docker 创建多个镜像进行本地 ansible 管理
+
+```bash
+# 启动容器
+ansible-playbook adhoc.yaml -e 'role=dev task=play-container-create facts=true' -i localhost
+
+# 检测存活
+ansible all -i plays -m ping
+# 进行操作
+ansible-playbook adhoc.yaml -e 'task=setup-base' -i plays
+
+# 实验完成销毁容器
+ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destory' -i localhost
+```

@@ -68,11 +68,13 @@
   when: stat_result.stat.exists
 
 - name: remove root authorized_keys
+  become: true
   file:
     path: /root/.ssh/authorized_keys
     state: absent
 
 - name: secure ssh
+  become: true
   lineinfile:
     path: /etc/ssh/sshd_config
     line: '{{item.name}} {{item.value}}'
@@ -97,6 +99,7 @@
   notify: sshd-restart
 
 - name: setup motd
+  become: true
   copy:
     dest: /etc/motd
     src: files/motd.txt

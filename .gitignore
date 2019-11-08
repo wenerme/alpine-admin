@@ -1,2 +1,8 @@
 *.passwd
 *_rsa
+cache
+ignored
+plays
+
+# 不提交到 github
+admin_rsa*
