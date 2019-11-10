@@ -1,0 +1,13 @@
+- name: install dbus
+  become: true
+  apk:
+    name: "{{item}}"
+  loop:
+  - dbus
+  - dbus-openrc
+
+- name: start dbus
+  become: true
+  service:
+    name: dbus
+    state: started
