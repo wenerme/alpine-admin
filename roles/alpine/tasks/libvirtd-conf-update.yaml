@@ -1,0 +1,11 @@
+
+- name: update libvirtd.conf
+  become: true
+  lineinfile:
+    path: /etc/libvirt/libvirtd.conf
+    line: "{{item.name}}={{item.value}} "
+    regex: '^\s*{{item.name}}'
+  loop:
+  # - { name: audit_level, value: 2 }
+  - { name: log_level, value: 3 }
+  notify: libvirtd-reload

@@ -6,7 +6,7 @@
 - name: sync nginx config for path nginx_conf_path={{nginx_conf_path | default('None')}}
   become: true
   synchronize:
-    src: "{{nginx_conf_path}}"
+    src: "{{nginx_conf_path}}/"
     dest: /etc/nginx/
     recursive: true
   when: "nginx_conf_path is defined and nginx_conf_path is directory"
