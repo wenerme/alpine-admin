@@ -1,34 +1,48 @@
+# play_dind = false
+# play_count = 3
+# play_volumes
+# play_privileged
+
 - name: install docker for py3
   # docker-py for 2.6
   # docker for 3.x
-  pip: name=docker
+  pip:
+    name: docker
   when: ansible_python.version.major > 2
 - name: install docker-py for py2
-  pip: name=docker-py
+  pip:
+    name: docker-py
   when: ansible_python.version.major < 3
-- name: create dockers
+
+- name: set play_sequence_end
+  set_fact:
+    play_sequence_end: '{{(play_count|default(3)|int) - 1}}'
+    play_volumes: "{{(play_volumes|default([])) + (['/var/run/docker.sock:/var/run/docker.sock'] if play_dind|default(false) else []) }}"
+
+- name: "create dockers {{(play_sequence_end|int)+1}} - volumes: {{play_volumes}}"
   docker_container:
     name: play{{item}}
     image: wener/app
     hostname: play{{item}}
     ports:
     - 22{{item}}:22
-  with_sequence: start=0 end={{container_count|default(2)}} format=%02x
+    volumes: "{{play_volumes}}"
+  with_sequence: start=0 end={{play_sequence_end}} format=%02x
 
 - name: setup admin ssh
   shell: |
     docker exec play{{item}} mkdir -p /home/admin/.ssh && 
     docker cp {{admin_pubkey_path}} play{{item}}:/home/admin/.ssh/authorized_keys &&
-    docker exec play{{item}} ash -c 'chmod 0700 /home/admin/.ssh && chown -R admin:admin /home/admin/.ssh && chmod 0600 /home/admin/.ssh/authorized_keys && passwd -u admin'
-  with_sequence: start=0 end={{container_count|default(2)}} format=%02x
+    docker exec play{{item}} ash -c 'chmod 0700 /home/admin/.ssh && chown -R admin:admin /home/admin/.ssh && chmod 0600 /home/admin/.ssh/authorized_keys && (passwd -u admin || true)'
+  with_sequence: start=0 end={{play_sequence_end}} format=%02x
 
 - name: create inventory
   lineinfile:
     path: ./plays
     line: "play{{item}} ansible_ssh_port=22{{item}} ansible_ssh_user=admin ansible_ssh_host=127.0.0.1 ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
     create: true
-  with_sequence: start=0 end={{container_count|default(2)}} format=%02x
+  with_sequence: start=0 end={{play_sequence_end}} format=%02x
 
 - name: remove old hostkey
   shell: ssh-keygen -R [127.0.0.1]:22{{item}}
-  with_sequence: start=0 end={{container_count|default(2)}} format=%02x
+  with_sequence: start=0 end={{play_sequence_end}} format=%02x

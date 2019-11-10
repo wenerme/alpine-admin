@@ -2,10 +2,16 @@
 Ansible Role for Alpine Host
 
 ## 文件结构
-* vault - 保存密钥相关内容
+* credentials - 保存证书等相关内容
   * admin_rsa.pri - 加密后的私钥 - 控制机器需要 ssh-add
   * admin_rsa.pub - 管理员公钥 - setup-base 时如果存在会拷贝到主机
-* files - 过程文件
+* files - 配置文件
+  * ${service_name} - 服务的配置文件
+  * ${hostname} - 针对主机的配置文件
+    * ${service_name} - 针对主机的服务配置文件
+* cache - 缓存文件 - 不提交仓库
+  * facts - 缓存主机的信息
+
 
 ## 准备工作
 
@@ -131,6 +137,8 @@ ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=mynet'
 ```bash
 # 启动容器
 ansible-playbook adhoc.yaml -e 'role=dev task=play-container-create facts=true' -i localhost
+# 可以考虑映射 $PWDcache/apk:/etc/apk/cache 作为 apk 缓存 - 当容器较多时安装速度更快
+# ansible-playbook adhoc.yaml -e '{"role":"dev","task":"play-container-create","facts":true,"play_volumes":["'$PWD'/cache/apk:/etc/apk/cache"]}' -i localhost
 
 # 检测存活
 ansible all -i plays -m ping
@@ -138,5 +146,5 @@ ansible all -i plays -m ping
 ansible-playbook adhoc.yaml -e 'task=setup-base' -i plays
 
 # 实验完成销毁容器
-ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destory' -i localhost
+ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destroy' -i localhost
 ```

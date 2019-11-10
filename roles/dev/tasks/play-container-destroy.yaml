@@ -1,0 +1,4 @@
+- name: remove containers
+  shell: docker rm -f play{{item}}
+  with_sequence: start=0 end={{(play_count|default(3)|int)-1}} format=%02x
+  

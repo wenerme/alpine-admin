@@ -1,0 +1,15 @@
+- name: install docker
+  become: true
+  apk:
+    name: "{{item}}"
+  loop:
+  - docker
+  # for ansbile docker module
+  - py3-dockerpty
+
+- name: add admin to docker group
+  become: true
+  user:
+    name: admin
+    groups: docker
+    append: yes

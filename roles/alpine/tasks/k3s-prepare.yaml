@@ -1,0 +1,39 @@
+# support amd64 only
+- name: mkdirs files/k3s
+  delegate_to: localhost
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+  - files/k3s
+  - cache/k3s/versions/{{k3s_version}}
+
+
+- name: set facts
+  delegate_to: localhost
+  set_fact:
+    k3s_release_url: "{{k3s_release_url|default('https://github.com/rancher/k3s/releases/download')}}"
+    k3s_download_url: "{{k3s_download_url|default((k3s_release_url|default('https://github.com/rancher/k3s/releases/download'))+'/v'+k3s_version)}}"
+    k3s_cache_path: "cache/k3s/versions/{{k3s_version}}"
+    k3s_arch: "{{k3s_arch|default('amd64')}}"
+
+# - name: download checksum
+#   delegate_to: localhost
+#   get_url:
+#       dest: "{{k3s_cache_path}}/{{item}}"
+#       url: "{{k3s_download_url}}/{{item}}"
+#       mode: +r
+#   loop:
+#   - sha256sum-{{k3s_arch}}.txt
+
+- name: download {{k3s_version}} from {{k3s_release_url}}
+  delegate_to: localhost
+  get_url:
+      dest: "{{k3s_cache_path}}/{{item}}"
+      url: "{{k3s_download_url}}/{{item}}"
+      checksum: sha256:{{k3s_download_url}}/sha256sum-{{k3s_arch}}.txt
+      mode: +x
+  loop:
+  - k3s
+  - hyperkube
+  - k3s-airgap-images-amd64.tar
