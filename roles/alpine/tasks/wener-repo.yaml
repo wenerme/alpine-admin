@@ -1,7 +1,7 @@
 - name: add pubkey
   become: true
   get_url:
-    url: https://raw.githubusercontent.com/wenerme/repository/master/alpine/wenermail@gmail.com-5dc8c7cd.rsa.pub
+    url: http://repo.wener.me/alpine/wenermail@gmail.com-5dc8c7cd.rsa.pub
     dest: /etc/apk/keys/wenermail@gmail.com-5dc8c7cd.rsa.pub
     mode: '0644'
     checksum: sha256:8719a701279508df40dbd5c72d00e645f68ad83e15aa04d4b9760991760a4823
@@ -10,4 +10,4 @@
   become: true
   lineinfile:
     path: /etc/apk/repositories
-    line: https://raw.githubusercontent.com/wenerme/repository/master/alpine/v3.10/community
+    line: http://repo.wener.me/alpine/v3.10/community
