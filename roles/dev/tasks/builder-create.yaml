@@ -1,0 +1,38 @@
+- name: set facts
+  set_fact:
+    host_data_path: "{{host_data_path|default('/opt/build')}}"
+    host_ssh_port: "{{host_ssh_port|default('2222')}}"
+- name: start server
+  docker_container:
+    name: build-server
+    image: wener/app:builder
+    ports:
+    - "{{host_ssh_port}}:22"
+    volumes:
+    - "{{host_data_path}}:/opt/build"
+    - "{{host_data_path}}/packages:/home/admin/packages"
+    - "{{host_data_path}}/home:/home/admin"
+    - "{{host_data_path}}/distfiles:/var/cache/distfiles"
+    - "{{host_data_path}}/cache:/etc/apk/cache"
+
+- name: ensure .ssh
+  become: true
+  file:
+    path: "{{host_data_path}}/home/.ssh"
+    state: directory
+    mode: 0700
+    owner: 1000
+    group: 1000
+
+- name: add host authorized_keys
+  copy:
+    dest: "{{host_data_path}}/home/.ssh/"
+    src: "{{ansible_env.HOME}}/.ssh/authorized_keys"
+    remote_src: yes
+    group: 1000
+    owner: 1000
+    mode: 0600
+
+- name: setup dir perm
+  shell: docker exec build-server sudo chown admin:admin /home/admin /opt/build
+
