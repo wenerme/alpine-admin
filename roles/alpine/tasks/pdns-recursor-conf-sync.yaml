@@ -1,0 +1,10 @@
+- name: set pdns_recursor_conf_path
+  set_fact:
+    pdns_recursor_conf_path: "{{pdns_recursor_conf_path | default('files/'+inventory_hostname+'/pdns/recursor.conf')}}"
+- name: copy recursor.conf {{pdns_recursor_conf_path}}
+  become: true
+  copy:
+    dest: /etc/pdns/recursor.conf
+    src: "{{pdns_recursor_conf_path}}"
+  when: pdns_recursor_conf_path is file
+  notify: pdns-restart
