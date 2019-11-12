@@ -1,0 +1,7 @@
+- name: set hostname
+  become: true
+  hostname:
+    name: "{{hostname|default(inventory_hostname)}}"
+    use: alpine
+
+# todo should generate 127.0.0.1 hostname in /etc/hosts
