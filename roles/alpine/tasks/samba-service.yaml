@@ -1,0 +1,7 @@
+- name: install samba packages
+  apk:
+    name: "{{item}}"
+  loop:
+  - samba
+  - samba-dc
+

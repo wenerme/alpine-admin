@@ -1,0 +1,9 @@
+- name: install netatalk
+  apk:
+    name: netatalk
+
+- name: start netatalk
+  service:
+    name: netatalk
+    state: started
+    enabled: true
