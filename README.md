@@ -11,7 +11,10 @@ Ansible Role for Alpine Host
     * ${service_name} - 针对主机的服务配置文件
 * cache - 缓存文件 - 不提交仓库
   * facts - 缓存主机的信息
-
+* roles
+  * alpine - AlpineLinux 管理运维
+  * dev - 开发相关操作
+  * docker - 容器应用 - 避免每次都记参数命令
 
 ## 准备工作
 
