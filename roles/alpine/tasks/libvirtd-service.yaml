@@ -30,7 +30,7 @@
 - name: persist mpdules
   become: true
   lineinfile:
-    path: /etc/modules-load.d/kvm
+    path: /etc/modules-load.d/kvm.conf
     line: "{{item}}"
     create: true
   loop: *modules

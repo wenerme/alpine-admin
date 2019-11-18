@@ -14,7 +14,7 @@
 - name: persist mpdules
   become: true
   lineinfile:
-    path: /etc/modules-load.d/tinc
+    path: /etc/modules-load.d/tinc.conf
     line: "{{item}}"
     create: true
   loop: *modules

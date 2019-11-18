@@ -4,7 +4,7 @@
   check_mode: no
   changed_when: no
 - name: install python
-  raw: command sudo &>/dev/null && sudo apk add python3 || apk add python3
+  raw: command -v sudo &>/dev/null && sudo apk add python3 || apk add python3
   when: python_exists.stdout == '0'
 - name: Gathering facts
   setup: {}

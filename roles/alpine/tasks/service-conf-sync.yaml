@@ -5,14 +5,12 @@
 
 - name: detect local conf path
   include_tasks: service-conf-path.yaml
-  vars:
-    service_name: nginx
 
-- name: sync nginx config for path
+- name: sync {{nginx}} config
   become: true
   synchronize:
     src: "{{service_conf_path}}/"
-    dest: /etc/nginx/
+    dest: "{{service_dest_conf_path}}/"
     recursive: true
   when: "service_conf_path | length > 0"
-  notify: nginx-reload
+  notify: "{{service_name}}-reload"

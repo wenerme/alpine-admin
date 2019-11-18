@@ -1,13 +1,18 @@
+- name: detect root mount
+  # TODO should find root mount
+  # sed -nr 's#^(/\S+)\s+/\s+.*#\1#p' /proc/mounts
+  set_fact:
+    root_dev: "{{root_dev|default('/dev/sda')}}"
 - name: e2fsprogs-extra
   become: true
   raw: apk add e2fsprogs-extra util-linux
 
 - name: repartition
   become: true
-  raw: echo -e 'd\n\nn\n\n\n\n\n\np\nw\n' | fdisk /dev/sda
+  raw: echo -e 'd\n\nn\n\n\n\n\n\np\nw\n' | fdisk {{root_dev}}
   register: repartition
 
 - name: resize2fs
   become: true
-  raw: resize2fs /dev/sda2
+  raw: resize2fs {{root_dev}}2
   when: repartition.changed
