@@ -6,11 +6,20 @@
 - name: detect local conf path
   include_tasks: service-conf-path.yaml
 
-- name: sync {{nginx}} config
+- name: sync {{service_name}} config dir
   become: true
   synchronize:
     src: "{{service_conf_path}}/"
     dest: "{{service_dest_conf_path}}/"
     recursive: true
-  when: "service_conf_path | length > 0"
+    delete: "{{service_conf_delete|default(false)}}"
+  when: "service_conf_path is directory"
+  notify: "{{service_name}}-reload"
+
+- name: sync {{service_name}} config file
+  become: true
+  synchronize:
+    src: "{{service_conf_path}}"
+    dest: "{{service_dest_conf_path}}"
+  when: "service_conf_path is file"
   notify: "{{service_name}}-reload"

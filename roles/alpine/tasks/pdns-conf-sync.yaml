@@ -1,10 +1,20 @@
-- name: set pdns_conf_path
-  set_fact:
-    pdns_conf_path: "{{pdns_conf_path | default('files/'+inventory_hostname+'/pdns/pdns.conf')}}"
-- name: copy pdns.conf {{pdns_conf_path}}
-  become: true
-  copy:
-    dest: /etc/pdns/pdns.conf
-    src: "{{pdns_conf_path}}"
-  when: pdns_conf_path is file
-  notify: pdns-restart
+# - name: set pdns_conf_path
+#   set_fact:
+#     pdns_conf_path: "{{pdns_conf_path | default('files/'+inventory_hostname+'/pdns/pdns.conf')}}"
+
+# - name: copy pdns.conf {{pdns_conf_path}}
+#   become: true
+#   copy:
+#     dest: /etc/pdns/pdns.conf
+#     src: "{{pdns_conf_path}}"
+#   when: pdns_conf_path is file
+#   notify: pdns-restart
+
+  - name: pdns conf sync
+    include_role:
+      name: alpine
+      tasks_from: service-conf-sync
+    vars:
+      service_name: pdns
+      service_dest_conf_path: /etc/pdns/pdns.conf
+      service_conf_file: pdns.conf
