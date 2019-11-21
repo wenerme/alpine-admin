@@ -2,7 +2,7 @@
   apk:
     name: dnsmasq
 
-- name: sync conf
+- name: sync dnsmasq conf
   include_tasks: dnsmasq-conf-sync.yaml
 
 - name: start dnsmasq service
