@@ -22,7 +22,7 @@
 - name: persist zfs mpdule
   become: true
   lineinfile:
-    path: /etc/modules-load.d/zfs
+    path: /etc/modules-load.d/zfs.conf
     line: zfs
     create: true
 
