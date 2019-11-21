@@ -1,0 +1,18 @@
+- name: dnsmasq conf sync
+  include_role:
+    name: alpine
+    tasks_from: service-conf-sync
+  vars:
+    service_name: dnsmasq
+    service_conf_dest_path: /etc/dnsmasq.conf
+    service_conf_file: dnsmasq.conf
+
+- name: dnsmasq.d conf sync
+  include_role:
+    name: alpine
+    tasks_from: service-conf-sync
+  vars:
+    service_name: dnsmasq
+    service_conf_dest_path: /etc/dnsmasq.d
+    service_conf_file: dnsmasq.d
+    service_conf_delete: true

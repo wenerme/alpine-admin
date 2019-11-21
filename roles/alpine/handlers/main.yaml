@@ -20,6 +20,12 @@
   become: true
   service: name=pdns state=restarted
 
+- name: dnsmasq-restart
+  become: true
+  service: name=dnsmasq state=restarted
+- name: dnsmasq-reload
+  become: true
+  service: name=dnsmasq state=reloaded
 
 - name: docker-restart
   become: true
@@ -45,15 +51,12 @@
   become: true
   service: name=traefik state=restarted
 
-
 - name: consul-restart
   become: true
   service: name=consul state=restarted
-
 - name: consul-reload
   become: true
   service: name=consul state=reloaded
-
 
 - name: consul-template-restart
   become: true

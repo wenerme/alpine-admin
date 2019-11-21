@@ -10,7 +10,7 @@
   become: true
   synchronize:
     src: "{{service_conf_path}}/"
-    dest: "{{service_dest_conf_path}}/"
+    dest: "{{service_conf_dest_path}}/"
     recursive: true
     delete: "{{service_conf_delete|default(false)}}"
   when: "service_conf_path is directory"
@@ -20,6 +20,6 @@
   become: true
   synchronize:
     src: "{{service_conf_path}}"
-    dest: "{{service_dest_conf_path}}"
+    dest: "{{service_conf_dest_path}}"
   when: "service_conf_path is file"
   notify: "{{service_name}}-reload"
