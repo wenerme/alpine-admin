@@ -1,0 +1,27 @@
+- name: resolv.conf candicates
+  set_fact:
+    resolv_conf_paths:
+    - "files/{{inventory_hostname}}/resolv.conf.j2"
+    - "files/{{inventory_hostname}}/resolv.conf"
+    - "files/{{working_group|default('')}}/resolv.conf.j2"
+    - "files/{{working_group|default('')}}/resolv.conf"
+    - "files/resolv.conf.j2"
+    - "files/resolv.conf"
+
+- name: resolv.conf path
+  set_fact:
+    resolv_conf_path: "{{resolv_conf_path|default(lookup('first_found', resolv_conf_paths, errors='ignore'))}}"
+
+- name: sync {{resolv_conf_path}} file
+  become: true
+  synchronize:
+    src: "{{resolv_conf_path}}"
+    dest: /etc/resolv.conf
+  when: "resolv_conf_path is file and resolv_conf_path is not regex('[.]j2$')"
+
+- name: template {{resolv_conf_path}} file
+  become: true
+  template:
+    src: "{{resolv_conf_path}}"
+    dest: /etc/resolv.conf
+  when: "resolv_conf_path is file and resolv_conf_path is regex('[.]j2$')"
