@@ -1,0 +1,25 @@
+- include_task: tinc-preset.yaml
+
+- name: check node exists
+  become: true
+  delegate_to: "{{tinc_master}}"
+  environment:
+    NETNAME: "{{tinc_netname}}"
+  shell: "tinc info {{tinc_name}}"
+  register: tinc_check_out
+  changed_when: false
+  failed_when: tinc_check_out.rc not in [ 0, 1 ]
+
+- name: invite node
+  become: true
+  delegate_to: "{{tinc_master}}"
+  environment:
+    NETNAME: "{{tinc_netname}}"
+  shell: "tinc invite {{tinc_name}}"
+  register: tinc_invite_out
+  when: tinc_check_out.rc == 1
+
+- name: join tinc
+  become: true
+  shell: "tinc join {{tinc_invite_out.stdout}}"
+  when: tinc_check_out.rc == 1

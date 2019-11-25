@@ -46,6 +46,9 @@
 - name: tinc-restart
   become: true
   service: name=tincd state=restarted
+- name: tinc-reload
+  become: true
+  service: name=tincd state=reloaded
 
 - name: traefik-restart
   become: true

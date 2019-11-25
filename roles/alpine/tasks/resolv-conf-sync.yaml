@@ -14,7 +14,7 @@
 
 - name: sync {{resolv_conf_path}} file
   become: true
-  synchronize:
+  copy:
     src: "{{resolv_conf_path}}"
     dest: /etc/resolv.conf
   when: "resolv_conf_path is file and resolv_conf_path is not regex('[.]j2$')"

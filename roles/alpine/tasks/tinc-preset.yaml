@@ -1,0 +1,9 @@
+- name: tinc preset
+  set_fact:
+    # tinc not allowed `-' in name but it's common in hostname
+    tinc_name: "{{tinc_name|default(inventory_hostname)|regex_replace('[-]','_')}}"
+    tinc_master: "{{tinc_master|default(tinc_netname)}}"
+    tinc_conf_dir: /etc/tinc/{{tinc_netname}}
+    tinc_preset: true
+  failed_when: tinc_netname is undefined
+  when: 'not (tinc_preset|default(false))'
