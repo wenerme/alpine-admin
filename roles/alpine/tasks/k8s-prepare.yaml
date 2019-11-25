@@ -34,11 +34,12 @@
     - iptable_raw
     - nf_conntrack_netlink
     - nf_conntrack
-    - nf_conntrack_ipv4
+    # not found alpine 3.10 virt 4.18
+    # - nf_conntrack_ipv4
     - nf_defrag_ipv4
     - nf_nat
     - nf_nat_ipv4
-    - nf_nat_masquerade_ipv4
+    # - nf_nat_masquerade_ipv4
     - nfnetlink
     - udp_tunnel
     - veth
@@ -66,8 +67,8 @@
 - name: sysctl conf
   become: true
   sysctl:
-    name: {{item.name}}
-    value: {{item.value}}
+    name: "{{item.name}}"
+    value: "{{item.value}}"
     state: present
   loop:
     - {name: net.bridge.bridge-nf-call-iptables, value: 1}
@@ -85,3 +86,26 @@
   loop:
     - { name: AllowTcpForwarding, value: 'yes' }
   notify: sshd-restart
+
+# Error response from daemon: linux mounts: path /var/lib/rancher is mounted on / but it is not a shared mount
+# findmnt -o TARGET,PROPAGATION /
+- name: shared root
+  become: true
+  shell: mount --make-rshared /
+  changed_when: no
+
+- name: enable local service
+  become: true
+  service:
+    name: local
+    state: started
+    enabled: true
+
+- name: enable mount shared root
+  become: true
+  copy:
+    dest: /etc/local.d/00-mount-shared-root.start
+    content: |
+      #!/bin/sh
+      mount --make-rshared /
+    mode: +x
