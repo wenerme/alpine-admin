@@ -1,0 +1,27 @@
+- name: Gathering facts
+  setup: {}
+
+- name: Package count
+  shell: '{{{"homebrew": "brew list", "apk": "apk info -vv"}[ansible_pkg_mgr] + "|wc -l"|default("n/a")}}'
+  register: package_count_out
+  changed_when: false
+
+# format followed neofetch output
+- name: OS Info
+  debug:
+    msg:
+      - "{{ansible_user_id}}({{ansible_user_uid}})@{{ansible_nodename}}"
+      - "OS: {{ansible_os_family}} {{ansible_distribution_version}} {{ansible_osversion|default('-')}}/{{ansible_osrevision|default('-')}} {{ansible_machine}}"
+      - "Host: {{ansible_model | default(ansible_product_name) | default(ansible_system_vendor)}}"
+      - "Kernel: {{ansible_kernel}}"
+      - "Uptime: {{(ansible_uptime_seconds/60/60/24)|int}} days {{(ansible_uptime_seconds/60/60 % 24)|int}} hours {{(ansible_uptime_seconds/60 % 60)|int}} minutes"
+      - "Packages: {{package_count_out.stdout}} ({{ansible_pkg_mgr}})"
+      - "Shell: {{ansible_user_shell}}"
+      - "CPU: {{ansible_processor_count|default('-')}}x{{ansible_processor_cores}}Cx{{ansible_processor_threads_per_core|default('-')}}T={{ansible_processor_vcpus}} vcpu {{ansible_processor[2] | default(ansible_processor)}}"
+      - "Memory: {{ansible_memtotal_mb - ansible_memfree_mb}} MB / {{ansible_memtotal_mb}} MB"
+      - "Network: {{ansible_default_ipv4.interface}} {{ansible_default_ipv4.address}} {{ansible_default_ipv4.netmask}}"
+      - "DNS: {{' '.join(ansible_dns.nameservers)}}"
+      - "Python: {{ansible_python.executable}} {{ansible_python_version}}"
+
+# todo interfaces
+# todo disks
