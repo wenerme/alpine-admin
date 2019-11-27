@@ -26,6 +26,17 @@
     line: zfs
     create: true
 
+- name: start zfs
+  become: true
+  service:
+    name: '{{item}}'
+    state: started
+  loop:
+  - zfs-import
+  - zfs-mount
+  tags:
+  - service-start
+
 - name: enable zfs on boot
   become: true
   service:
@@ -35,12 +46,6 @@
   loop:
   - zfs-import
   - zfs-mount
+  tags:
+  - service-enable
 
-- name: start zfs
-  become: true
-  service:
-    name: '{{item}}'
-    state: started
-  loop:
-  - zfs-import
-  - zfs-mount

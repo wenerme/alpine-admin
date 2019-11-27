@@ -64,3 +64,29 @@
 - name: consul-template-restart
   become: true
   service: name=consul-template state=restarted
+
+# quagga
+- name: quagga-zebra-restart
+  become: true
+  listen: quagga-zebra-reload
+  service: name=zebra state=restarted
+- name: quagga-ripd-restart
+  become: true
+  listen: quagga-ripd-reload
+  service: name=ripd state=restarted
+- name: quagga-ripngd-restart
+  become: true
+  listen: quagga-ripngd-reload
+  service: name=ripngd state=restarted
+- name: quagga-ospfd-restart
+  become: true
+  listen: quagga-ospfd-reload
+  service: name=ospfd state=restarted
+- name: quagga-ospf6d-restart
+  become: true
+  listen: quagga-ospf6d-reload
+  service: name=ospf6d state=restarted
+- name: quagga-bgpd-restart
+  become: true
+  listen: quagga-bgpd-reload
+  service: name=bgpd state=restarted
