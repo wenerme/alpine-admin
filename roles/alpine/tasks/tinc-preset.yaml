@@ -1,9 +1,17 @@
 - name: tinc preset
   set_fact:
+    # multi TINC detect tinc_$NETNAME_property
+    tinc_master: "{{tinc_master|default(lookup('vars', 'tinc_'+tinc_netname+'_master',default=null))|default(tinc_netname)}}"
     # tinc not allowed `-' in name but it's common in hostname
-    tinc_name: "{{tinc_name|default(inventory_hostname)|regex_replace('[-]','_')}}"
-    tinc_master: "{{tinc_master|default(tinc_netname)}}"
-    tinc_conf_dir: /etc/tinc/{{tinc_netname}}
+    tinc_name: "{{tinc_name|default(lookup('vars', 'tinc_'+tinc_netname+'_name',default=null))|default(inventory_hostname)|regex_replace('[-]','_')}}"
+    tinc_address: "{{tinc_address|default(lookup('vars', 'tinc_'+tinc_netname+'_address',default=null))}}"
+    tinc_subnet: "{{tinc_subnet|default(lookup('vars', 'tinc_'+tinc_netname+'_subnet',default=null))}}"
+    tinc_conf_dir: "{{tinc_conf_dir|default(lookup('vars', 'tinc_'+tinc_netname+'_conf_dir',default=null))|default('/etc/tinc/'+tinc_netname)}}"
+    # cutome          - do not genrate tinc-up - try sync
+    # empty           - generate empty tinc-up
+    # static-address  - generate tinc-up: ifconfig $INTERFACE {{tinc_address|ipaddr('address')}} netmask {{tinc_subnet|default(tinc_address)|ipaddr('netmask')}}
+    # bridge          - generate tinc-up: ip li set $INTERFACE {{tinc_bridge_master}}; ip li set $INTERFACE up
+    tinc_interface_mode: "{{tinc_interface_mode|default(lookup('vars','tinc_bridge_master',default=null))|default('static-address')}}"
     tinc_preset: true
   failed_when: tinc_netname is undefined
   when: 'not (tinc_preset|default(false))'

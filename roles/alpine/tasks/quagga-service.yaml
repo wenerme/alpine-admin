@@ -5,6 +5,13 @@
   loop:
   - quagga
 
+- name: add admin to quagga group
+  become: true
+  user:
+    name: admin
+    groups: quagga
+    append: yes
+
 - name: quagga log dir
   become: true
   file:

@@ -1,4 +1,4 @@
-- include_task: tinc-preset.yaml
+- include_tasks: tinc-preset.yaml
 
 - name: check node exists
   become: true
