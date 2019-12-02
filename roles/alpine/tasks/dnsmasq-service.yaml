@@ -1,6 +1,15 @@
 - name: install dnsmasq
+  become: true
   apk:
     name: dnsmasq
+  when: dnsmasq_dnssec is undefined
+
+# dnsmasq with dnssec support - conflict with dnsmasq
+- name: install dnsmasq-dnssec (optional)
+  become: true
+  apk:
+    name: dnsmasq-dnssec
+  when: dnsmasq_dnssec is defined
 
 - name: sync dnsmasq conf
   include_tasks: dnsmasq-conf-sync.yaml

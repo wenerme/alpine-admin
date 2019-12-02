@@ -1,9 +1,4 @@
-- name: nfs install
-  become: true
-  apk:
-    name: "{{item}}"
-  loop:
-  - nfs-utils
+- include_tasks: nfs-install.yaml
 
 - name: nfs start
   become: true

@@ -11,6 +11,7 @@
     # empty           - generate empty tinc-up
     # static-address  - generate tinc-up: ifconfig $INTERFACE {{tinc_address|ipaddr('address')}} netmask {{tinc_subnet|default(tinc_address)|ipaddr('netmask')}}
     # bridge          - generate tinc-up: ip li set $INTERFACE {{tinc_bridge_master}}; ip li set $INTERFACE up
+    # dhcp            - TODO udhpc $INTERFACE
     tinc_interface_mode: "{{tinc_interface_mode|default(lookup('vars','tinc_bridge_master',default=null))|default('static-address')}}"
     tinc_preset: true
   failed_when: tinc_netname is undefined
