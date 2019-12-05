@@ -1,4 +1,4 @@
-- include_tasks: alpine-update.yaml
+- include_tasks: apk-update.yaml
 - name: apk version
   raw: apk version
   register: raw_result
