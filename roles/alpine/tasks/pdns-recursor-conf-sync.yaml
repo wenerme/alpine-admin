@@ -1,10 +1,14 @@
-- name: set pdns_recursor_conf_path
-  set_fact:
-    pdns_recursor_conf_path: "{{pdns_recursor_conf_path | default('files/'+inventory_hostname+'/pdns/recursor.conf')}}"
-- name: copy recursor.conf {{pdns_recursor_conf_path}}
-  become: true
-  copy:
-    dest: /etc/pdns/recursor.conf
-    src: "{{pdns_recursor_conf_path}}"
-  when: pdns_recursor_conf_path is file
-  notify: pdns-restart
+
+- name: pdns recursor conf sync
+  include_tasks: service-conf-sync.yaml
+  vars:
+    service_name: pdns-recursor
+    service_conf_dest_path: /etc/pdns/recursor.conf
+    service_conf_file: recursor.conf
+
+- name: pdns recursor .j2 conf sync
+  include_tasks: service-conf-sync.yaml
+  vars:
+    service_name: pdns-recursor
+    service_conf_dest_path: /etc/pdns/recursor.conf
+    service_conf_file: recursor.conf.j2

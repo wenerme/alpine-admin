@@ -6,18 +6,7 @@
   - pdns-recursor
   - pdns-recursor-openrc
 
-- name: "check conf exists {{pdns_recursor_conf_path}}"
-  delegate_to: localhost
-  stat:
-    path: "{{pdns_recursor_conf_path}}"
-  register: stat_result
-- name: copy recursor.conf
-  become: true
-  copy:
-    dest: /etc/pdns/recursor.conf
-    src: "{{pdns_recursor_conf_path}}"
-  when: stat_result.stat.exists
-  notify: pdns-recursor-restart
+- include_tasks: pdns-recursor-conf-sync.yaml
 
 - name: start pdns-recursor service
   become: true

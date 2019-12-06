@@ -18,7 +18,7 @@
       # skip j2 template
       - "--exclude=*.j2"
   when: "service_conf_path is directory"
-  notify: "{{service_name}}-reload"
+  notify: "{{service_name}}-{{service_notify_type|default('reload')}}"
 
 # NOTE no recursive
 - name: template {{service_name}} config dir
@@ -29,7 +29,7 @@
   when: "service_conf_path is directory"
   with_fileglob:
     - "{{service_conf_path}}/*.j2"
-  notify: "{{service_name}}-reload"
+  notify: "{{service_name}}-{{service_notify_type|default('reload')}}"
 
 - name: sync {{service_name}} config file
   become: true
@@ -37,7 +37,7 @@
     src: "{{service_conf_path}}"
     dest: "{{service_conf_dest_path}}"
   when: "service_conf_path is file and service_conf_path is not regex('[.]j2$')"
-  notify: "{{service_name}}-reload"
+  notify: "{{service_name}}-{{service_notify_type|default('reload')}}"
 
 - name: template {{service_name}} config file
   become: true
@@ -46,4 +46,4 @@
     # expect a file path not directory - otherwise will use .j2 extension
     dest: "{{service_conf_dest_path}}"
   when: "service_conf_path is file and service_conf_path is regex('[.]j2$')"
-  notify: "{{service_name}}-reload"
+  notify: "{{service_name}}-{{service_notify_type|default('reload')}}"

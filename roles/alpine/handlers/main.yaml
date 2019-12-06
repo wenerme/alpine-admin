@@ -9,16 +9,19 @@
   become: true
   service: name=nginx state=reloaded
 
-- name: pdns-recursor-restart
-  become: true
-  service: name=pdns-recursor state=restarted
-
 - name: pdns-restart
   become: true
   service: name=pdns state=restarted
 - name: pdns-reload
   become: true
   service: name=pdns state=restarted
+- name: pdns-recursor-restart
+  become: true
+  service: name=pdns-recursor state=restarted
+- name: pdns-recursor-reload
+  become: true
+  service: name=pdns-recursor state=restarted
+
 
 - name: dnsmasq-restart
   become: true
