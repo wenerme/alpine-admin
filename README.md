@@ -42,7 +42,7 @@ CFG
 __生成管理员密钥__
 
 > 💡提示
-> 
+>
 > 以下的操作等同于
 >
 > ```
@@ -150,4 +150,36 @@ ansible-playbook adhoc.yaml -e 'task=setup-base' -i plays
 
 # 实验完成销毁容器
 ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destroy' -i localhost
+```
+
+## 技巧
+
+## 设置别名更方便使用
+```bash
+# 简化执行
+# adhoc setup-base -e 'ansible_user=root' -l myhost
+adhoc(){ local task=$1; shift; ansible-playbook $PWD/adhoc.yaml -e task=$task $*; }
+
+# 节点信息概览 - 系统/CPU/内存/网络
+adhoc host-info
+```
+
+## 使用 Ansible Vault 加密密钥
+
+```bash
+# 生成密码
+cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | head -c 32 > credentials/secrets.passwd
+# 指定默认密码文件
+export ANSIBLE_VAULT_PASSWORD_FILE=$PWD/credentials/secrets.passwd
+# 生成密钥文件
+touch credentials/secrets.yaml
+# 加密密钥文件
+ansible-vault encrypt credentials/secrets.yaml
+
+# 编辑添加内容
+# 例如 db_password: changeme
+ansible-vault edit credentials/secrets.yaml
+
+# 使用密钥文件
+ansible-playbook adhoc.yaml -e 'task=setup-base' -l myhost -e @credentials/secrets.yaml
 ```
