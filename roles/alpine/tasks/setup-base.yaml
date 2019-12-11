@@ -2,7 +2,7 @@
 
 - name: install basic package
   become: true
-  apk: 
+  apk:
     name: '{{item}}'
   loop:
   - nano
@@ -23,6 +23,12 @@
     state: present
     shell: /bin/bash
     password_lock: no
+- name: setup admin group
+  become: true
+  group:
+    name: admin
+    gid: '1000'
+    state: present
 - name: admin in /etc/passwd
   become: true
   lineinfile:
@@ -45,11 +51,17 @@
 
 - name: ensure .ssh
   become: true
-  become_user: admin
   file:
     path: /home/admin/.ssh
     state: directory
+    owner: admin
+    group: admin
     mode: 0700
+- name: check root authorized_keys
+  become: true
+  stat:
+    path: /root/.ssh/authorized_keys
+  register: stat_result
 - name: copy root authorized_keys to admin
   become: true
   copy:
@@ -57,16 +69,17 @@
       src: /root/.ssh/authorized_keys
       remote_src: yes
       group: admin
-      mode: 0600
       owner: admin
-  ignore_errors: yes
+      mode: 0600
+  when: stat_result.stat.exists
 
 - name: check admin pubkey {{admin_pubkey_path}}
   delegate_to: localhost
-  stat: 
+  stat:
     path: "{{admin_pubkey_path}}"
   register: stat_result
 - name: copy operator pub key to admin
+  become: true
   authorized_key:
     user: admin
     state: present

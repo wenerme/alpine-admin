@@ -1,18 +1,8 @@
-- name: add rsync
-  become: true
-  apk:
-    name: rsync
-
-- name: detect local conf path
-  include_tasks: service-conf-path.yaml
+- name: nginx conf sync
+  include_role:
+    name: alpine
+    tasks_from: service-conf-sync
   vars:
     service_name: nginx
-
-- name: sync nginx config for path
-  become: true
-  synchronize:
-    src: "{{service_conf_path}}/"
-    dest: /etc/nginx/
-    recursive: true
-  when: "service_conf_path | length > 0"
-  notify: nginx-reload
+    service_conf_dest_path: /etc/nginx
+    service_conf_delete: true

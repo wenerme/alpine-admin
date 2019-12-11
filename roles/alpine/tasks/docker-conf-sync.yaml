@@ -1,0 +1,7 @@
+- name: set docker mirror {{docker_mirror}}
+  become: true
+  copy:
+      dest: /etc/docker/daemon.json
+      # fixme should not override whole json
+      content: '{ "registry-mirrors": ["{{docker_mirror}}"] }'
+  notify: docker-restart

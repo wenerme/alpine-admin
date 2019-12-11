@@ -1,10 +1,7 @@
-- name: install nginx
-  become: true
-  apk:
-    name: "{{item}}"
-  loop:
-  - nginx
-  - nginx-mod-stream
+
+- include_tasks: nginx-install.yaml
+
+- include_tasks: nginx-conf-sync.yaml
 
 - name: enable nginx
   become: true

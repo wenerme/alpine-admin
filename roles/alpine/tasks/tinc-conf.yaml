@@ -22,6 +22,8 @@
   when: tinc_host_conf is defined
   notify: "tinc-reload"
 
+# tinc-up
+
 - name: tinc-up static-address conf
   become: true
   copy:
@@ -38,7 +40,7 @@
     dest: "{{tinc_conf_dir}}/tinc-up"
     content: |
       #!/bin/sh
-      ip li set $INTERFACE {{tinc_bridge_master}}
+      ip li set $INTERFACE master {{tinc_bridge_master}}
       ip li set $INTERFACE up
   when: tinc_interface_mode == 'bridge'
   notify: "tinc-reload"
