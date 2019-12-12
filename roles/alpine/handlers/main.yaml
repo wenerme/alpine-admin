@@ -48,10 +48,20 @@
 
 - name: tinc-restart
   become: true
-  service: name=tincd state=restarted
+  # service: name=tincd state=restarted
+  shell: tinc -n {{tinc_netname}} restart
 - name: tinc-reload
   become: true
-  service: name=tincd state=reloaded
+  # service: name=tincd state=reloaded
+  shell: tinc -n {{tinc_netname}} reload
+
+# not working
+# - name: tinc-restart-{{tinc_netname}}
+#   become: true
+#   shell: tinc -n {{tinc_netname}} restart
+# - name: tinc-reload
+#   become: true
+#   shell: tinc -n {{tinc_netname}} reload
 
 - name: traefik-restart
   become: true

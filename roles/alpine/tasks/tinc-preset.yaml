@@ -2,7 +2,12 @@
   set_fact:
     # multi TINC detect tinc_$NETNAME_property
     # the master node used to invite nodes
-    tinc_master: "{{tinc_master|default(lookup('vars', 'tinc_'+tinc_netname+'_master',default=null))|default(tinc_netname)}}"
+    tinc_master: >-
+      {{
+      tinc_master
+      |default(lookup('vars', 'tinc_'+tinc_netname+'_master',default=null))
+      |default(tinc_netname)
+      }}
     # name for node
     # tinc not allowed `-' in name but it's common in hostname
     tinc_name: "{{tinc_name|default(lookup('vars', 'tinc_'+tinc_netname+'_name',default=null))|default(inventory_hostname)|regex_replace('[-]','_')}}"
@@ -11,9 +16,9 @@
     # the whole subnet - not node subnet
     tinc_subnet: "{{tinc_subnet|default(lookup('vars', 'tinc_'+tinc_netname+'_subnet',default=null))}}"
     # kv conf for /etc/tinc/$NETNAME/tinc.conf
-    tinc_conf: "{{tinc_conf|default(lookup('vars', 'tinc_'+tinc_netname+'_conf',default=null))}}"
+    tinc_conf: "{{tinc_conf|default(lookup('vars', 'tinc_'+tinc_netname+'_conf',default=[]))}}"
     # kv for /etc/tinc/$NETNAME/hosts/$NETNAME
-    tinc_host_conf: "{{tinc_conf|default(lookup('vars', 'tinc_'+tinc_netname+'_host_conf',default=null))}}"
+    tinc_host_conf: "{{tinc_host_conf|default(lookup('vars', 'tinc_'+tinc_netname+'_host_conf',default=[]))}}"
     # conf dir to sync
     tinc_conf_dir: "{{tinc_conf_dir|default(lookup('vars', 'tinc_'+tinc_netname+'_conf_dir',default=null))|default('/etc/tinc/'+tinc_netname)}}"
     # custom          - do not genrate tinc-up - try sync
@@ -25,7 +30,7 @@
       {{
       tinc_interface_mode
       |default(lookup('vars', 'tinc_'+tinc_netname+'_interface_mode',default=null))
-      |'bridge' if default(lookup('vars','tinc_bridge_master',default=null)) != null else null
+      |default('bridge' if lookup('vars','tinc_bridge_master',default='') != '' else null)
       |default('static-address')
       }}
 

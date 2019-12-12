@@ -1,5 +1,11 @@
 - include_tasks: tinc-preset.yaml
 
+# - name: debug vars
+#   debug:
+#     msg:
+#     - "NETNAME: {{tinc_netname}}"
+#     - "Interface Mode: {{tinc_interface_mode}}"
+
 - name: apply tinc conf
   become: true
   lineinfile:
@@ -8,8 +14,8 @@
     regex: '^[^#]*?{{item.name}}(\s|=)'
     state: "{{item.state|default('present')}}"
   loop: "{{tinc_conf}}"
-  when: tinc_conf is defined
-  notify: "tinc-reload"
+  when: tinc_conf is defined and (tinc_conf|length > 0)
+  notify: tinc-reload
 
 - name: apply host conf
   become: true
@@ -19,8 +25,8 @@
     regex: '^[^#]*?{{item.name}}(\s|=)'
     state: "{{item.state|default('present')}}"
   loop: "{{tinc_host_conf}}"
-  when: tinc_host_conf is defined
-  notify: "tinc-reload"
+  when: tinc_host_conf is defined and (tinc_host_conf|length > 0)
+  notify: "tinc-restart"
 
 # tinc-up
 
@@ -31,8 +37,9 @@
     content: |
       #!/bin/sh
       ifconfig $INTERFACE {{tinc_address|ipaddr('address')}} netmask {{tinc_subnet|default(tinc_address)|ipaddr('netmask')}}
+      {{tinc_conf_tinc_up_extra|default('')}}
   when: tinc_interface_mode == 'static-address'
-  notify: "tinc-reload"
+  notify: "tinc-restart"
 
 - name: tinc-up bridge conf
   become: true
@@ -42,8 +49,9 @@
       #!/bin/sh
       ip li set $INTERFACE master {{tinc_bridge_master}}
       ip li set $INTERFACE up
+      {{tinc_conf_tinc_up_extra|default('')}}
   when: tinc_interface_mode == 'bridge'
-  notify: "tinc-reload"
+  notify: "tinc-restart"
 
 - name: tinc-up empty conf
   become: true
@@ -51,6 +59,16 @@
     dest: "{{tinc_conf_dir}}/tinc-up"
     content: |
       #!/bin/sh
+      {{tinc_conf_tinc_up_extra|default('')}}
   when: tinc_interface_mode == 'empty'
-  notify: "tinc-reload"
+  notify: "tinc-restart"
 
+# no common configurations
+- name: tinc-down conf
+  become: true
+  copy:
+    dest: "{{tinc_conf_dir}}/tinc-down"
+    content: |
+      #!/bin/sh
+      {{tinc_conf_tinc_down_extra|default('')}}
+  when: tinc_conf_tinc_down_extra is defined

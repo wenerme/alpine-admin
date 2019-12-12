@@ -6,6 +6,7 @@
   retisger: stat_result
 
 - name: init tinc net
+  become: true
   environment:
     NETNAME: "{{tinc_netname}}"
   shell: "tinc init {{tinc_name}}"
