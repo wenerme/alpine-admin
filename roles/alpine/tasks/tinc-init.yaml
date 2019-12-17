@@ -3,7 +3,7 @@
 - name: check tinc net exists
   stat:
     path: "{{tinc_conf_dir}}"
-  retisger: stat_result
+  register: stat_result
 
 - name: init tinc net
   become: true

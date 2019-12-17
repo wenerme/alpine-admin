@@ -1,5 +1,7 @@
 - include_tasks: ensure-python.yaml
 
+# system
+# --------------------
 - name: install basic package
   become: true
   apk:
@@ -12,6 +14,16 @@
   - sudo
   - busybox-extras
 
+# TODO
+# /etc/keymap
+# setup-keymap us us
+# /etc/localtime
+# setup-timezone -z Asia/Shanghai
+# check port
+# setup-ntp -c busybox
+
+# admin account
+# --------------------
 - name: setup admin account
   become: true
   user:
@@ -49,6 +61,8 @@
     regexp: '^admin'
     line: 'admin ALL=(ALL) NOPASSWD: ALL'
 
+# admin ssh / harden ssh
+# --------------------
 - name: ensure .ssh
   become: true
   file:
@@ -118,6 +132,8 @@
   # - { name: UsePAM, value: 'no' }
   notify: sshd-restart
 
+# misc
+# --------------------
 - name: setup motd
   become: true
   copy:
