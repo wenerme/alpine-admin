@@ -1,3 +1,8 @@
+- name: get major version
+  shell: sed -r 's/[.][^.]*$//' /etc/alpine-release
+  register: shell_result
+  changed_when: false
+
 - name: add pubkey
   become: true
   get_url:
@@ -6,8 +11,15 @@
     mode: '0644'
     checksum: sha256:8719a701279508df40dbd5c72d00e645f68ad83e15aa04d4b9760991760a4823
 
-- name: add repo
+# ansible_distribution_version=3.11.0
+- name: add main repo
   become: true
   lineinfile:
     path: /etc/apk/repositories
-    line: http://repo.wener.me/alpine/v3.10/community
+    line: https://repo.wener.me/alpine/v{{shell_result.stdout}}/main
+
+- name: add community repo
+  become: true
+  lineinfile:
+    path: /etc/apk/repositories
+    line: https://repo.wener.me/alpine/v{{shell_result.stdout}}/community

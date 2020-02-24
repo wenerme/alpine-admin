@@ -41,25 +41,25 @@
     name: admin
     gid: '1000'
     state: present
-- name: admin in /etc/passwd
-  become: true
-  lineinfile:
-    path: /etc/passwd
-    line: admin:x:1000:1000:Administrator:/home/admin:/bin/bash
-    regex: '^admin:'
-- name: admin in /etc/shadow
-  become: true
-  lineinfile:
-    path: /etc/shadow
-    line: "admin:*:18000:0:99999:7:::"
-    regex: '^admin:'
-- name: admin as sudoer
+- name: admin as sudoer without password
   become: true
   lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: '^admin'
     line: 'admin ALL=(ALL) NOPASSWD: ALL'
+- name: disable password for admin in /etc/passwd
+  become: true
+  lineinfile:
+    path: /etc/passwd
+    line: admin:x:1000:1000:Administrator:/home/admin:/bin/bash
+    regex: '^admin:'
+- name: unlock admin in /etc/shadow
+  become: true
+  lineinfile:
+    path: /etc/shadow
+    line: "admin:*:18000:0:99999:7:::"
+    regex: '^admin:'
 
 # admin ssh / harden ssh
 # --------------------
