@@ -46,7 +46,7 @@
   lineinfile:
     dest: /etc/sudoers
     state: present
-    regexp: '^admin'
+    regex: '^admin'
     line: 'admin ALL=(ALL) NOPASSWD: ALL'
 - name: disable password for admin in /etc/passwd
   become: true
