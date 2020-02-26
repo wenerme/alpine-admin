@@ -1,5 +1,4 @@
 # alpine mirror
-alpine_version: '3.10'
 alpine_mirror: https://mirrors.ustc.edu.cn/alpine
 
 # docker mirror

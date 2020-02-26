@@ -14,3 +14,5 @@
     msg:
     - "Alpine Full Version: {{alpine_full_version}}"
     - "Alpine Major Version: {{alpine_major_version}}"
+  tags:
+  - debug
