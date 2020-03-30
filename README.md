@@ -160,6 +160,14 @@ ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destroy' -i localho
 # adhoc setup-base -e 'ansible_user=root' -l myhost
 adhoc(){ local task=$1; shift; ansible-playbook $PWD/adhoc.yaml -e task=$task $*; }
 
+# 新增节点 - 确定能无密码登陆
+ssh-copy-id root@10.0.0.1
+# 使用 root 账户初始 - 默认使用 admin
+adhoc setup-base -l node-1 -e ansible_user=root
+
+# 初始化帮助运维的工具
+adhoc setup-ops -l node-1
+
 # 节点信息概览 - 系统/CPU/内存/网络
 adhoc host-info
 ```

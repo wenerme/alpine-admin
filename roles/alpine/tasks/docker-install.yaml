@@ -1,7 +1,8 @@
 - name: install docker
   become: true
-  apk:
+  package:
     name: "{{item}}"
+    state: present
   loop:
   - docker
   # for ansbile docker module

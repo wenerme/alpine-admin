@@ -3,9 +3,11 @@
 cache
 ignored
 plays
+.DS_Store
 
 # 不提交到 github
 admin_rsa*
 
 # 默认不提交 files 下的内容
 files
+backup

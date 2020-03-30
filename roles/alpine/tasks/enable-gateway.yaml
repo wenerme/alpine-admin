@@ -12,8 +12,10 @@
 
 - name: setup interface
   set_fact:
-    gateway_interface: "{{gateway_interface|default('eth0')}}"
+    gateway_in_interface: "{{gateway_in_interface|default('eth0')}}"
+    gateway_out_interface: "{{gateway_out_interface|default('eth0')}}"
     gateway_source: "{{gateway_source|default('0.0.0.0/0')}}"
+    gateway_destination: "{{gateway_destination|default('0.0.0.0/0')}}"
     gateway_persist: "{{gateway_persist|default(true)}}"
 
 - name: sysctl conf
@@ -31,8 +33,9 @@
 - name: enable forward
   become: true
   iptables:
-    in_interface: "{{gateway_interface}}"
+    in_interface: "{{gateway_in_interface}}"
     source: "{{gateway_source}}"
+    destination: "{{gateway_destination}}"
     action: insert
     chain: FORWARD
     jump: ACCEPT
@@ -40,8 +43,9 @@
 - name: enable nat
   become: true
   iptables:
-    out_interface: "{{gateway_interface}}"
+    out_interface: "{{gateway_out_interface}}"
     source: "{{gateway_source}}"
+    destination: "{{gateway_destination}}"
     action: append
     table: nat
     chain: POSTROUTING
@@ -51,9 +55,9 @@
   become: true
   interfaces_file:
     dest: /etc/network/interfaces
-    iface: "{{gateway_interface}}"
+    iface: "{{gateway_in_interface}}"
     option: post-up
-    value: iptables -I FORWARD -i {{gateway_interface}} -s {{gateway_source}} -j ACCEPT
+    value: iptables -I FORWARD -i {{gateway_in_interface}} -s {{gateway_source}} -d {{gateway_destination}} -j ACCEPT
     state: present
   when: gateway_persist
 
@@ -61,8 +65,8 @@
   become: true
   interfaces_file:
     dest: /etc/network/interfaces
-    iface: "{{gateway_interface}}"
+    iface: "{{gateway_in_interface}}"
     option: post-up
-    value: iptables -t nat -A POSTROUTING -o {{gateway_interface}} -s {{gateway_source}} -j MASQUERADE
+    value: iptables -t nat -A POSTROUTING -o {{gateway_out_interface}} -s {{gateway_source}} -d {{gateway_destination}} -j MASQUERADE
     state: present
   when: gateway_persist
