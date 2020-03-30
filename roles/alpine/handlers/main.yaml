@@ -105,3 +105,8 @@
   become: true
   listen: quagga-bgpd-reload
   service: name=bgpd state=restarted
+
+
+- name: monit-reload
+  become: true
+  service: name=monit state=reloaded

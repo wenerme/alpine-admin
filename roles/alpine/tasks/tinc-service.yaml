@@ -1,18 +1,4 @@
 - include_tasks: tinc-install.yaml
 - include_tasks: tinc-conf.yaml
 
-- name: update tinc.networks
-  become: true
-  lineinfile:
-    path: /etc/conf.d/tinc.networks
-    line: 'NETWORK: {{tinc_netname}}'
-    regex: '^[^#]*?{{tinc_netname}}'
-  notify: tinc-restart
-  when: tinc_netname is defined
-
-- name: enable tinc service
-  become: true
-  service:
-    name: tincd
-    state: started
-    enabled: true
+- include_tasks: tinc-enable.yaml
