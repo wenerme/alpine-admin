@@ -107,13 +107,17 @@ ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=mynet'
   * 允许 admin 无密码 sudo
   * 移除密码登录
   * 禁止 root 远程登录
-* setup-virt-node - 设置运行在 libvirt 中的节点
-  * 会安装 qemu-agent
-  * 启动 acpid - libvirt 的关机基于 acpid 命令
+* setup-more - 额外基础配置
+  * keymap
+  * timezone
+  * ntp
 * setup-ops - 运维节点配置
   * 安装运维常用的包
 * setup-phy - 物理节点配置
   * 安装物理节点常用的包
+* setup-virt-node - 设置运行在 libvirt 中的节点
+  * 会安装 qemu-agent
+  * 启动 acpid - libvirt 的关机基于 acpid 命令
 
 ### 服务维护
 
