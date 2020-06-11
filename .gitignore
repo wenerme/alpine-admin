@@ -5,6 +5,9 @@ ignored
 plays
 .DS_Store
 
+.idea
+node_moduels
+
 # 不提交到 github
 admin_rsa*
 

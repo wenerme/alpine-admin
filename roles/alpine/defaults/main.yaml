@@ -15,5 +15,3 @@ alpine_services:
 #
 # pdns_recursor_conf_path: files/pdns/recursor.conf
 # pdns_conf_path: files/pdns/pdns.conf
-
-k3s_version: '0.10.2'

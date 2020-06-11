@@ -1,39 +1,36 @@
-# support amd64 only
-- name: mkdirs files/k3s
-  delegate_to: localhost
-  file:
-    path: "{{item}}"
-    state: directory
+- name: check exists
+  stat:
+    path: /etc/update-extlinux.conf
+  register: stat
+
+- name: check kernel params
+  become: true
+  lineinfile:
+    path: /etc/update-extlinux.conf
+    backrefs: yes
+    regexp: '^default_kernel_opts="[^"]*cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory[^"]*"'
+    state: absent
+  check_mode: yes
+  register: lineinfile
+  changed_when: false
+  when: stat.stat.exists
+
+- name: add cgroup kernel params
+  become: true
+  lineinfile:
+    path: /etc/update-extlinux.conf
+    backrefs: yes
+    regexp: '^default_kernel_opts="([^""]*)"'
+    line: 'default_kernel_opts="\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory"'
+  when: lineinfile.found is defined and not lineinfile.found
+
+- name: install basic package
+  become: true
+  apk:
+    name: '{{item}}'
   loop:
-  - files/k3s
-  - cache/k3s/versions/{{k3s_version}}
+  - socat
+  - iproute2
+  - iptables
 
-
-- name: set facts
-  delegate_to: localhost
-  set_fact:
-    k3s_release_url: "{{k3s_release_url|default('https://github.com/rancher/k3s/releases/download')}}"
-    k3s_download_url: "{{k3s_download_url|default((k3s_release_url|default('https://github.com/rancher/k3s/releases/download'))+'/v'+k3s_version)}}"
-    k3s_cache_path: "cache/k3s/versions/{{k3s_version}}"
-    k3s_arch: "{{k3s_arch|default('amd64')}}"
-
-# - name: download checksum
-#   delegate_to: localhost
-#   get_url:
-#       dest: "{{k3s_cache_path}}/{{item}}"
-#       url: "{{k3s_download_url}}/{{item}}"
-#       mode: +r
-#   loop:
-#   - sha256sum-{{k3s_arch}}.txt
-
-- name: download {{k3s_version}} from {{k3s_release_url}}
-  delegate_to: localhost
-  get_url:
-      dest: "{{k3s_cache_path}}/{{item}}"
-      url: "{{k3s_download_url}}/{{item}}"
-      checksum: sha256:{{k3s_download_url}}/sha256sum-{{k3s_arch}}.txt
-      mode: +x
-  loop:
-  - k3s
-  - hyperkube
-  - k3s-airgap-images-amd64.tar
+- import_tasks: machine-id.yaml

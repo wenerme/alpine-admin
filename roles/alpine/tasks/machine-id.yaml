@@ -1,0 +1,13 @@
+# [ -f /etc/machine-id ] || ( uuidgen | sudo tee -a /etc/machine-id )
+
+- name: check exists
+  stat:
+    path: /etc/machine-id
+  register: stat
+
+- name: generate machine-id
+  become: true
+  copy:
+    dest: /etc/machine-id
+    content: "{{999999999 | random | to_uuid}}"
+  when: not stat.stat.exists or (machine_id_force is defined and machine_id_force)
