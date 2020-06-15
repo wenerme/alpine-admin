@@ -1,0 +1,26 @@
+- name: setup timezone
+  become: true
+  shell: setup-timezone -z Asia/Shanghai
+
+- name: setup keymap
+  become: true
+  shell: setup-keymap us us
+
+- name: setup ntp
+  become: true
+  shell: setup-ntp -c busybox
+
+- name: enable acpid
+  become: true
+  service:
+    name: acpid
+    enabled: true
+    state: started
+    runlevel: default
+
+# - name: enable mdev when no udev
+#   service:
+#       name: mdev
+#       enabled: true
+#       state: started
+#       runlevel: sysinit

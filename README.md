@@ -103,14 +103,16 @@ ansible-playbook adhoc.yaml -e 'task=tinc-service tinc_netname=mynet'
   * 确保 python 环境 - ansible 依赖
   * 安装基础包
   * 设置 admin 帐号
-  * 拷贝 admin 公钥 vault/admin_rsa.pub
+  * 拷贝 admin 公钥 credentials/admin_rsa.pub
   * 允许 admin 无密码 sudo
   * 移除密码登录
   * 禁止 root 远程登录
-* setup-more - 额外基础配置
+* setup-base-service - 基础服务配置
   * keymap
   * timezone
   * ntp
+  * acpid
+  * mdev
 * setup-ops - 运维节点配置
   * 安装运维常用的包
 * setup-phy - 物理节点配置
@@ -194,4 +196,91 @@ ansible-vault edit credentials/secrets.yaml
 
 # 使用密钥文件
 ansible-playbook adhoc.yaml -e 'task=setup-base' -l myhost -e @credentials/secrets.yaml
+```
+
+## 使用场景
+
+### tinc 网络初始化
+
+```yaml
+all:
+  hosts:
+    # server node
+    interos:
+      # tinc server node - accessable by other nodes
+      ansible_host: 100.100.100.100
+      # tinc address of this node
+      tinc_address: 10.10.1.1
+      tinc_conf:
+      # use switch mode
+      - {name: Mode, value: Switch}
+      tinc_host_conf:
+      # default port
+      - {name: Port, value: 665}
+      # add subnet for this node
+      - {name: Subnet, value: "{{tinc_subnet|ipaddr('1')|ipaddr('address')}}/32"}
+      # address or domain access by other nodes
+      - {name: Address, value: 100.100.100.100}
+
+    node-1:
+      ansible_host: 192.168.1.100
+      tinc_address: 10.10.1.2
+
+    node-2:
+      ansible_host: 192.168.1.101
+      tinc_address: 10.10.1.3
+
+  children:
+    nodes:
+      hosts:
+        node-1:
+        node-2:
+  vars:
+    ansible_user: admin
+    # use py 3
+    ansible_python_interpreter: /usr/bin/python3
+    tinc_netname: "interos"
+    tinc_subnet: 10.10.0.0/16
+    # node default conf - use random port
+    tinc_host_conf:
+      - {name: Port, value: 0}
+```
+
+```bash
+# init server
+adhoc tinc-init -l interos
+adhoc tinc-service -l interos
+
+# join nodes
+adhoc tinc-join -l nodes
+adhoc tinc-service -l nodes
+```
+
+### AlpineLinux 本地 DNS 缓存
+Alpine 的 DNS 在有时候会非常慢， musl 和 Linux 内核历来就有的问题
+
+```yaml
+all:
+  hosts:
+    node:
+      ansible_host: 192.168.1.1
+      # can use other address
+      resolv_conf: |
+        nameserver {{ansible_host}}
+  vars:
+    ansible_user: admin
+    ansible_python_interpreter: /usr/bin/python3
+    # upstream dns
+    dnsmasq_resolv_conf: |
+      nameserver 223.5.5.5
+      nameserver 114.114.114.114
+```
+
+```bash
+# start dnsmasq
+adhoc dnsmasq-service
+# disable udhcpc override resolv.conf
+adhoc udhcpc-resolv-conf-no
+# config resolv.conf
+adhoc resolv-conf-sync
 ```

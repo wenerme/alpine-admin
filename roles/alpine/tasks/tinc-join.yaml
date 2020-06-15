@@ -12,7 +12,7 @@
   changed_when: false
   failed_when: tinc_check_out.rc not in [ 0, 1 ]
 
-- name: invite node
+- name: invite node to {{tinc_netname}}
   become: true
   delegate_to: "{{tinc_master}}"
   environment:

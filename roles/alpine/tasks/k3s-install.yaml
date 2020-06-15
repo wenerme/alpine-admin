@@ -1,48 +1,4 @@
-
-- name: fetch latest version
-  delegate_to: localhost
-  shell: curl -sfL https://api.github.com/repos/rancher/k3s/releases/latest | jq .tag_name -r
-  register: shell
-  # warn: false
-
-- name: set version
-  set_fact:
-    k3s_version: "{{k3s_version|default(shell.stdout)}}"
-    k3s_arch: "{{k3s_arch|default('amd64')}}"
-    k3s_release_url: "{{k3s_release_url|default('https://github.com/rancher/k3s/releases/download')}}"
-
-- name: set k3s facts
-  set_fact:
-    k3s_download_url: "{{k3s_download_url|default(k3s_release_url+'/'+k3s_version)}}"
-    k3s_local_path: "files/k3s/{{k3s_version}}/{{k3s_arch}}"
-
-- name: prepare local cache dir
-  delegate_to: localhost
-  file:
-    path: "{{item}}"
-    state: directory
-  loop:
-  - "{{k3s_local_path}}"
-
-- name: download checksum
-  delegate_to: localhost
-  get_url:
-    dest: "{{k3s_local_path}}/sha256sum.txt"
-    url: "{{k3s_download_url}}/sha256sum-{{k3s_arch}}.txt"
-    # checksum: sha256:{{k3s_download_url}}/sha256sum-{{k3s_arch}}.txt
-  when: "not ((k3s_local_path+'/sha256sum.txt') is file)"
-
-- name: download {{k3s_version}} from {{k3s_download_url}}
-  delegate_to: localhost
-  # shell: curl -sfLC- -o {{k3s_local_path}}/{{item}} {{k3s_download_url}}/{{item}}
-  get_url:
-    dest: "{{k3s_local_path}}/k3s"
-    url: "{{k3s_download_url}}/{{item}}"
-    # checksum: sha256:{{k3s_download_url}}/sha256sum-{{k3s_arch}}.txt
-    mode: "755"
-  # when: not ((k3s_local_path+'/'+item) is file)
-  loop:
-  - "{{'k3s' if k3s_arch == 'amd64' else 'k3s-'+k3s_arch }}"
+- import_tasks: k3s-preset.yaml
 
 - name: prepare install dir
   become: true
@@ -64,23 +20,40 @@
 #   loop:
 #   - k3s
 
-- name: install
+- name: install k3s
   become: true
   synchronize:
     src: /opt/k3s/k3s
     dest: /usr/local/bin
   delegate_to: "{{ inventory_hostname }}"
 
-
-
-- name: create soft link
+- name: k3s +x
   become: true
   file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/{{item}}
-    state: link
-    # mode: +x
-  loop:
-  - kubectl
-  - crictl
-  - ctr
+    dest: /usr/local/bin/k3s
+    mode: a+x
+
+# - name: create soft link
+#   become: true
+#   file:
+#     src: /usr/local/bin/k3s
+#     dest: /usr/local/bin/{{item}}
+#     state: link
+#     # mode: +x
+#   loop:
+#   - kubectl
+#   - crictl
+#   - ctr
+
+- name: install
+  become: true
+  command: >
+    env
+    INSTALL_K3S_SKIP_DOWNLOAD=true
+    INSTALL_K3S_SKIP_ENABLE=true
+    INSTALL_K3S_VERSION={{k3s_version}}
+
+    {{k3s_install_env|default('')}}
+
+    /opt/k3s/k3s-install.sh
+    {{k3s_install_options|default('')}}

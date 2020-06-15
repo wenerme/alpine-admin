@@ -1,4 +1,6 @@
-- name: check exists
+- import_tasks: k3s-preset.yaml
+
+- name: check update-extlinux.conf exists
   stat:
     path: /etc/update-extlinux.conf
   register: stat
@@ -34,3 +36,4 @@
   - iptables
 
 - import_tasks: machine-id.yaml
+- import_tasks: local-mount-share-root.yaml

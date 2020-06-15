@@ -14,14 +14,6 @@
   - sudo
   - busybox-extras
 
-# TODO
-# /etc/keymap
-# setup-keymap us us
-# /etc/localtime
-# setup-timezone -z Asia/Shanghai
-# check port
-# setup-ntp -c busybox
-
 # admin account
 # --------------------
 - name: setup admin account
