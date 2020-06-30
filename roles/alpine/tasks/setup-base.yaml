@@ -62,7 +62,7 @@
     state: directory
     owner: admin
     group: admin
-    mode: 0700
+    mode: "0700"
 - name: check root authorized_keys
   become: true
   stat:
@@ -76,7 +76,7 @@
       remote_src: yes
       group: admin
       owner: admin
-      mode: 0600
+      mode: "0600"
   when: stat_result.stat.exists
 
 - name: check admin pubkey {{admin_pubkey_path}}
@@ -84,6 +84,8 @@
   stat:
     path: "{{admin_pubkey_path}}"
   register: stat_result
+  when: admin_pubkey_path is defined
+
 - name: copy operator pub key to admin
   become: true
   authorized_key:
