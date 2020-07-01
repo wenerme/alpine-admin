@@ -1,0 +1,10 @@
+- name: set apk repo
+  become: true
+  copy:
+    path: /etc/apk/repositories
+    content: |
+      {{alpine_mirror}}/v{{alpin_version}}/main
+      {{alpine_mirror}}/v{{alpin_version}}/community
+      {{apk_repositories_extra | default('')}}
+
+# TODO support extra mirror
