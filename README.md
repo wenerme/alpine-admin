@@ -284,3 +284,14 @@ adhoc udhcpc-resolv-conf-no
 # config resolv.conf
 adhoc resolv-conf-sync
 ```
+
+# FAQ
+## 不克隆仓库本地同步使用这里的 roles
+
+```bash
+SRC=$PWD
+DEST=other/project
+rsync -a $SRC/roles/{alpine,dev} $DEST/roles/
+# 拷贝 plays
+rsync -a $SRC/roles/alpine/plays/ $DEST/
+```

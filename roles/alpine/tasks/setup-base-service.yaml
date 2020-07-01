@@ -1,15 +1,24 @@
+# will not keep tzdata pkg after copy and link
 - name: setup timezone
   become: true
   shell: setup-timezone -z Asia/Shanghai
 
+# /etc/keymap - will not keep keymap pkg
+# rc-update add loadkmap boot
 - name: setup keymap
   become: true
   shell: setup-keymap us us
 
 - name: setup ntp
   become: true
-  shell: setup-ntp -c busybox
+  service:
+    # busybox->ntpd chronyd openntpd
+    name: "{{ntp_service|default('ntpd')}}"
+    enabled: true
+    state: started
+    runlevel: default
 
+# poweroff or reset works
 - name: enable acpid
   become: true
   service:
@@ -18,6 +27,7 @@
     state: started
     runlevel: default
 
+# device hotplug
 # - name: enable mdev when no udev
 #   service:
 #       name: mdev
