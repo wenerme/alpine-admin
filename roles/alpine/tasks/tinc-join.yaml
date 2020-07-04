@@ -21,6 +21,10 @@
   register: tinc_invite_out
   when: tinc_check_out.rc == 1
 
+# - name: join url
+#   debug:
+#     msg: "{{tinc_invite_out.stdout}}"
+
 - name: join tinc
   become: true
   shell: "tinc join {{tinc_invite_out.stdout}}"

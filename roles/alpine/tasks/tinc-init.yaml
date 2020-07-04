@@ -14,4 +14,4 @@
   when: not stat_result.stat.exists
 
 - include_tasks: tinc-conf.yaml
-- include_tasks: tinc-enable.yaml
+- include_tasks: tinc-supervise.yaml

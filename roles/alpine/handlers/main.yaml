@@ -49,7 +49,10 @@
 - name: tinc-restart
   become: true
   # service: name=tincd state=restarted
-  shell: tinc pid && tinc restart || tinc start
+  shell: |
+    [ -f /etc/init.d/tincd.{{tinc_netname}} ] &&
+    service tincd.{{tinc_netname}} ||
+    { tinc pid && tinc restart || tinc start; }
   environment:
     NETNAME: "{{tinc_netname}}"
 - name: tinc-reload
