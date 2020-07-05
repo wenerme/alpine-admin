@@ -1,0 +1,13 @@
+- name: pull server token
+  become: true
+  fetch:
+    src: /var/lib/rancher/k3s/server/token
+    dest: files/k3s-server-token
+    flat: true
+
+- name: pull config
+  become: true
+  fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: files/k3s.yaml
+    flat: true

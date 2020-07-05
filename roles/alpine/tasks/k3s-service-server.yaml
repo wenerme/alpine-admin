@@ -1,0 +1,17 @@
+# - set_fact:
+#     k3s_node_token: "{{lookup('file','files/k3s-server-token')}}"
+#   when: k3s_node_token is undefined
+
+- name: setup env
+  become: true
+  copy:
+    content: "{{k3s_env}}"
+    dest: /etc/rancher/k3s/k3s.env
+  when: k3s_env is defined
+
+- name: start k3s
+  become: true
+  service:
+    name: k3s
+    enabled: true
+    state: started

@@ -1,5 +1,7 @@
 - import_tasks: k3s-preset.yaml
 
+- import_tasks: docker-service.yaml
+
 - name: prepare install dir
   become: true
   file:
@@ -7,8 +9,14 @@
     path: /opt/k3s
     state: directory
 
+# - name: ensure rsync
+#   become: true
+#   package:
+#     name: rsync
+#     state: present
+
 - name: send
-  synchronize:
+  copy:
     src: "{{k3s_local_path}}/"
     dest: "/opt/k3s/"
 

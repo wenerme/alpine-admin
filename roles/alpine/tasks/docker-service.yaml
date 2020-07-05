@@ -6,13 +6,7 @@
     path: /etc/docker
     state: directory
 
-- name: set docker mirror {{docker_mirror}}
-  become: true
-  copy:
-      dest: /etc/docker/daemon.json
-      # fixme should not override whole json
-      content: '{ "registry-mirrors": ["{{docker_mirror}}"] }'
-  notify: docker-restart
+- import_tasks: docker-conf.yaml
 
 - name: start docker on bootstrap
   become: true

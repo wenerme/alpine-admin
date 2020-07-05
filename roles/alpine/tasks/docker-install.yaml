@@ -12,5 +12,6 @@
   become: true
   user:
     name: admin
-    groups: docker
+    groups:
+    - docker
     append: yes
