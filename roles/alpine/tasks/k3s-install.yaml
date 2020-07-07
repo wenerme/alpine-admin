@@ -9,16 +9,19 @@
     path: /opt/k3s
     state: directory
 
-# - name: ensure rsync
-#   become: true
-#   package:
-#     name: rsync
-#     state: present
+- name: ensure rsync
+  become: true
+  package:
+    name: rsync
+    state: present
 
 - name: send
-  copy:
+  synchronize:
     src: "{{k3s_local_path}}/"
     dest: "/opt/k3s/"
+    owner: no
+    group: no
+    use_ssh_args: yes
 
 # - name: chmod
 #   become: true
@@ -35,11 +38,11 @@
     dest: /usr/local/bin
   delegate_to: "{{ inventory_hostname }}"
 
-- name: k3s +x
-  become: true
-  file:
-    dest: /usr/local/bin/k3s
-    mode: a+x
+# - name: k3s +x
+#   become: true
+#   file:
+#     dest: /usr/local/bin/k3s
+#     mode: a+x
 
 # - name: create soft link
 #   become: true

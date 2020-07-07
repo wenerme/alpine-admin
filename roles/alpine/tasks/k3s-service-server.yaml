@@ -1,8 +1,4 @@
-# - set_fact:
-#     k3s_node_token: "{{lookup('file','files/k3s-server-token')}}"
-#   when: k3s_node_token is undefined
-
-- name: setup env
+- name: setup k3s server env
   become: true
   copy:
     content: "{{k3s_env}}"
