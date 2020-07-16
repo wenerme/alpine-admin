@@ -256,6 +256,87 @@ adhoc tinc-join -l nodes
 adhoc tinc-service -l nodes
 ```
 
+### K3S 部署
+* 准备工作
+  * 确保网络通，如果混合云，使用 Tinc 打通网络，用 Tinc 作为 flannel backend
+  * 配置主机
+
+__示例配置__
+
+```yaml
+# 两个分组 k3s-server 和 k3s-worker
+
+all:
+  children:
+    k3s-server:
+      hosts:
+        # 主机
+        k3s-master-1:
+      vars:
+        k3s_role: server
+        # flannel-iface 使用了 tinc
+        # k3s_node_ip 节点 IP - 用了 tinc 则于 tinc 地址相同
+        k3s_install_options: >-
+          --disable=traefik,servicelb
+          --flannel-backend=host-gw
+          --docker
+          --flannel-iface={{tinc_netname}}
+          --node-ip={{k3s_node_ip}}
+        k3s_install_env: |
+          INSTALL_K3S_EXEC=server
+        # k3s_database_url 数据库地址
+        k3s_env: |
+          K3S_DATASTORE_ENDPOINT={{k3s_database_url}}
+          K3S_NODE_NAME={{hostname|default(inventory_hostname)}}
+
+    k3s-worker:
+      hosts:
+        # 主机
+        k3s-worker-1:
+      vars:
+        k3s_role: agent
+        k3s_install_env: |
+          INSTALL_K3S_EXEC=agent
+        k3s_install_options: >-
+          --docker
+          --flannel-iface={{tinc_netname}}
+          --node-ip={{k3s_node_ip}}
+        # k3s_master_ip 主节点地址
+        # k3s_node_token 主节点的 token - 部署后才能取到
+        k3s_env: |
+          NODE_IP={{k3s_node_ip}}
+          K3S_URL=https://{{k3s_master_ip}}:6443
+          K3S_TOKEN={{k3s_node_token}}
+          K3S_NODE_NAME={{hostname|default(inventory_hostname)}}
+
+```
+
+```bash
+# 下载到本地
+adhoc k3s-download
+# 准备 - 内核参数，必要配置，安装必要环境
+adhoc k3s-prepare
+# 修改了内核参数可能需要重启
+adhoc reboot
+
+# 安装 server
+adhoc k3s-install -l k3s-server
+# 启动
+adhoc k3s-service -l k3s-server
+# 拉取配置
+adhoc k3s-server-conf-pull -l k3s-master-1
+
+# 添加 token 配置
+
+# 安装 worker
+adhoc k3s-install -l k3s-worker
+# 启动
+adhoc k3s-service -l k3s-server
+# 完成
+```
+
+> 可以针对 server 和 worker 写 playbook 使得部署更简单
+
 ### AlpineLinux 本地 DNS 缓存
 Alpine 的 DNS 在有时候会非常慢， musl 和 Linux 内核历来就有的问题
 
