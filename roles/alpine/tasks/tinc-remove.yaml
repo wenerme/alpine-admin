@@ -1,5 +1,5 @@
 # Disable current service
-- import_tasks: tinc-service-disable.yaml
+- import_tasks: tincd-service-disable.yaml
 
 # Uninstall cutomized supervisor
 - import_tasks: tinc-supervise-uninstall.yaml

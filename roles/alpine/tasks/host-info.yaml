@@ -2,7 +2,7 @@
   setup: {}
 
 - name: Package count
-  shell: '{{{"homebrew": "brew list", "apk": "apk info -vv"}[ansible_pkg_mgr] + "|wc -l"|default("n/a")}}'
+  shell: '{{{"homebrew": "brew list", "apk": "apk info -vv", "apt": "dpkg --list"}[ansible_pkg_mgr] + "|wc -l"|default("n/a")}}'
   register: package_count_out
   changed_when: false
 
@@ -20,11 +20,11 @@
       - "Uptime: {{(ansible_uptime_seconds|default(0)/60/60/24)|int}} days {{(ansible_uptime_seconds|default(0)/60/60 % 24)|int}} hours {{(ansible_uptime_seconds|default(0)/60 % 60)|int}} minutes"
       - "Packages: {{package_count_out.stdout}} ({{ansible_pkg_mgr}})"
       - "Shell: {{ansible_user_shell}}"
-      - "Network: {{ansible_default_ipv4.interface}} {{ansible_default_ipv4.address}} {{ansible_default_ipv4.netmask}}"
+      - "Network: {% if ansible_default_ipv4 is defined %}{{ansible_default_ipv4.interface}} {{ansible_default_ipv4.address}} {{ansible_default_ipv4.netmask}}{% else %}n/a{% endif %}"
       - "DNS: {{' '.join(ansible_dns.nameservers|default('-'))}}"
       - "Python: {{ansible_python.executable}} {{ansible_python_version}}"
-      - "Interfaces: {{', '.join(ansible_interfaces|sort)}}"
-      - "Addresses: {{', '.join(ansible_all_ipv4_addresses|sort)}}"
+      - "Interfaces: {% if ansible_interfaces is defined %}{{', '.join(ansible_interfaces|sort)}}{% else %}n/a{% endif %}"
+      - "Addresses: {% if ansible_all_ipv4_addresses is defined %}{{', '.join(ansible_all_ipv4_addresses|sort)}}{% else %}n/a{% endif %}"
 
 # docker
 # ansible_docker0 is defined
