@@ -156,6 +156,10 @@ ansible-playbook adhoc.yaml -e 'task=setup-base' -i plays
 
 # 实验完成销毁容器
 ansible-playbook adhoc.yaml -e 'role=dev task=play-container-destroy' -i localhost
+
+# 本地虚拟机
+# ssh 127.0.0.1:2222
+ansible all -i localvm -m ping
 ```
 
 ## 技巧
