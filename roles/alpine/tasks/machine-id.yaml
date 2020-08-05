@@ -8,6 +8,8 @@
 - name: generate machine-id
   become: true
   copy:
+    # ‘/etc/machine-id' should contain a hex string of length 32, not length 36, with no other text
+    # UUID without dash
     dest: /etc/machine-id
-    content: "{{999999999 | random | to_uuid}}"
+    content: "{{999999999 | random | to_uuid | regex_replace('-', '')}}"
   when: not stat.stat.exists or (machine_id_force is defined and machine_id_force)

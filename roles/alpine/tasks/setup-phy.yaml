@@ -16,3 +16,7 @@
     # debug
     - bind-tools
     - tcpdump
+    - dmidecode
+    # - lm-sernsor
+    # - lm-sensors-sensord
+    # - lm-sensors-detect

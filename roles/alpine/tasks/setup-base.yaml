@@ -13,6 +13,9 @@
   - bash
   - sudo
   - busybox-extras
+  # scp
+  - openssh-client
+  - openssh-sftp-server
 
 # admin account
 # --------------------

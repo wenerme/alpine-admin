@@ -2,10 +2,11 @@
 
 - include_tasks: tinc-preset.yaml
 
-- name: check network exists
+- name: check network {{tinc_netname}} exists
   shell: tinc network | grep '^{{tinc_netname}}$'
   register: shell_result
-  failed_when: shell_result.rc == 0
+  changed_when: false
+  failed_when: shell_result.rc != 0
 
 # 如果网络名字相同 - 则直接跳过
 # 如果网络名字不同 - 则中止或者从新配置

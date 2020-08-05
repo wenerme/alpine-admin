@@ -14,6 +14,8 @@
   - py3-libvirt
   - py3-libxml2
   - virt-install
+  # group auth
+  - polkit
 
 # virt-host-validate recommand vhost_net for better virtio performance
 # suggeest intel_iommu=on https://www.kernel.org/doc/Documentation/Intel-IOMMU.txt
@@ -61,9 +63,11 @@
 
 # some libvirtd feature need dbus
 - name: ensure dbus
-  include_tasks: ensure-service.yaml
-  vars:
-  - service_name: dbus
+  become: true
+  service:
+    name: dbus
+    state: started
+    enabled: true
 
 - include_tasks: libvirtd-conf-update.yaml
 

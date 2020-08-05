@@ -13,6 +13,8 @@
   - htop
   # 网络
   - iftop
+  - tcpdump
+  - bind-tools
   # info
   - neofetch
   - util-linux

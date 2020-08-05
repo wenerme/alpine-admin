@@ -1,0 +1,17 @@
+- name: ZeroTier | install
+  become: true
+  package:
+    name: zerotier-one
+    state: present
+
+- name: ZeroTier | start
+  become: true
+  service:
+      name: zerotier-one
+      enabled: true
+      state: started
+
+- name: ZeroTier | join
+  become: true
+  command: zerotier-cli join {{zerotier_id}}
+  when: zerotier_id is defined
