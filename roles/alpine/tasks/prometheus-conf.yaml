@@ -18,6 +18,7 @@
     dest: /etc/prometheus/prometheus.yml
     content: "{{prometheus_conf_inline | to_yaml}}"
   when: prometheus_conf_inline is defined and prometheus_conf_inline is mapping
+  notify: prometheus-reload
 
 - name: prometheus | service inline conf
   become: true
@@ -25,6 +26,7 @@
     dest: /etc/conf.d/prometheus
     content: "{{prometheus_service_conf_inline}}"
   when: prometheus_service_conf_inline is defined
+  notify: prometheus-reload
 
 # map conf
 # prometheus_service_conf = [{name,value}]

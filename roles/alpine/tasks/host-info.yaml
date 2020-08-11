@@ -2,7 +2,7 @@
   setup: {}
 
 - name: Package count
-  shell: '{{{"homebrew": "brew list", "apk": "apk info -vv", "apt": "dpkg --list"}[ansible_pkg_mgr] + "|wc -l"|default("n/a")}}'
+  shell: '{{{"homebrew": "brew list", "apk": "apk info -vv", "apt": "dpkg --list", "yum":"yum list installed","rpm":"rpm -qa"}[ansible_pkg_mgr] + "|wc -l"|default("n/a")}}'
   register: package_count_out
   changed_when: false
 

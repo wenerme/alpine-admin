@@ -113,3 +113,7 @@
 - name: monit-reload
   become: true
   service: name=monit state=reloaded
+
+- name: prometheus-reload
+  become: true
+  service: name=prometheus state=reloaded
