@@ -61,6 +61,8 @@
 #     regex: '^[^#]+virbr0'
 #     state: present
 
+- import_tasks: dbus-service.yaml
+
 # some libvirtd feature need dbus
 - name: ensure dbus
   become: true
@@ -69,7 +71,7 @@
     state: started
     enabled: true
 
-- include_tasks: libvirtd-conf-update.yaml
+- import_tasks: libvirtd-conf.yaml
 
 - name: start libvirtd
   become: true

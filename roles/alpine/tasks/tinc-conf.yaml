@@ -6,7 +6,7 @@
 #     - "NETNAME: {{tinc_netname}}"
 #     - "Interface Mode: {{tinc_interface_mode}}"
 
-- name: apply tinc conf
+- name: tinc | apply tinc conf
   become: true
   lineinfile:
     path: "{{tinc_conf_dir}}/tinc.conf"
@@ -17,7 +17,7 @@
   when: tinc_conf is defined and (tinc_conf|length > 0)
   notify: tinc-reload
 
-- name: apply host conf
+- name: tinc | apply host conf
   become: true
   lineinfile:
     path: "{{tinc_conf_dir}}/hosts/{{tinc_name}}"
@@ -30,7 +30,7 @@
 
 # tinc-up
 
-- name: tinc-up static-address conf
+- name: tinc | tinc-up static-address conf
   become: true
   copy:
     dest: "{{tinc_conf_dir}}/tinc-up"
@@ -41,7 +41,7 @@
   when: tinc_interface_mode == 'static-address'
   notify: "tinc-restart"
 
-- name: tinc-up bridge conf
+- name: tinc | tinc-up bridge conf
   become: true
   copy:
     dest: "{{tinc_conf_dir}}/tinc-up"
@@ -53,7 +53,7 @@
   when: tinc_interface_mode == 'bridge'
   notify: "tinc-restart"
 
-- name: tinc-up empty conf
+- name: tinc | tinc-up empty conf
   become: true
   copy:
     dest: "{{tinc_conf_dir}}/tinc-up"
@@ -64,7 +64,7 @@
   notify: "tinc-restart"
 
 # no common configurations
-- name: tinc-down conf
+- name: tinc | tinc-down conf
   become: true
   copy:
     dest: "{{tinc_conf_dir}}/tinc-down"

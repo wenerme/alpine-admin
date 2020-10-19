@@ -1,9 +1,9 @@
-- name: install tinc-pre
+- name: tinc | install tinc-pre
   become: true
   apk:
     name: tinc-pre
 
-- name: load modules
+- name: tinc | load modules
   become: true
   modprobe:
     name: "{{item}}"
@@ -11,7 +11,7 @@
   loop: &modules
   - tun
 
-- name: persist mpdules
+- name: tinc | persist mpdules
   become: true
   lineinfile:
     path: /etc/modules-load.d/tinc.conf

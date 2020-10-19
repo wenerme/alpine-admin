@@ -5,5 +5,5 @@
 
 - name: "service {{service_name}} status: {{'started' if shell_result.stdout == '1' else 'stopped'}}"
   set_fact:
-      service_started: "{{true if shell_result.stdout == '1' else false}}"
+    service_started: "{{true if shell_result.stdout == '1' else false}}"
   changed_when: no

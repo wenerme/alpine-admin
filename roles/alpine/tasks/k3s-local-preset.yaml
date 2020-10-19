@@ -1,5 +1,5 @@
 - name: setup ansible_architecture
-  setup:
+  setup: {}
   when: ansible_architecture is undefined
 
 - name: detect arch

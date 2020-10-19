@@ -1,17 +1,16 @@
-- include_tasks: tinc-install.yaml
+- import_tasks: tinc-install.yaml
+- import_tasks: tinc-preset.yaml
 
-- include_tasks: tinc-preset.yaml
-
-- name: check network {{tinc_netname}} exists
-  shell: tinc network | grep '^{{tinc_netname}}$'
-  register: shell_result
-  changed_when: false
-  failed_when: shell_result.rc != 0
+# - name: tinc | check network {{tinc_netname}} exists
+#   shell: tinc network | grep '^{{tinc_netname}}$'
+#   register: shell_result
+#   changed_when: false
+#   failed_when: shell_result.rc != 0
 
 # 如果网络名字相同 - 则直接跳过
 # 如果网络名字不同 - 则中止或者从新配置
 
-- name: check node exists
+- name: tinc | check node exists
   become: true
   delegate_to: "{{tinc_master}}"
   environment:
@@ -21,7 +20,7 @@
   changed_when: false
   failed_when: tinc_check_out.rc not in [ 0, 1 ]
 
-- name: invite node to {{tinc_netname}}
+- name: tinc | invite node to {{tinc_netname}}
   become: true
   delegate_to: "{{tinc_master}}"
   environment:
@@ -34,7 +33,7 @@
 #   debug:
 #     msg: "{{tinc_invite_out.stdout}}"
 
-- name: join tinc
+- name: tinc | join tinc
   become: true
   shell: "tinc join {{tinc_invite_out.stdout}}"
   when: tinc_check_out.rc == 1

@@ -2,6 +2,7 @@
   when: apk_upgradable_count is undefined
 
 - name: apk upgrade
+  become: true
   apk:
     available: "{{apk_upgrade_all|default(false)}}"
     upgrade: yes

@@ -1,4 +1,4 @@
-- import_tasks: k3s-preset.yaml
+# - import_tasks: k3s-preset.yaml
 
 - name: check update-extlinux.conf exists
   stat:

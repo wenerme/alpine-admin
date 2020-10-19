@@ -1,11 +1,5 @@
 - import_tasks: docker-install.yaml
 
-- name: mkdir /etc/docker
-  become: true
-  file:
-    path: /etc/docker
-    state: directory
-
 - import_tasks: docker-conf.yaml
 
 - name: start docker on bootstrap

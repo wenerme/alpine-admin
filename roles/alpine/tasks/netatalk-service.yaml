@@ -1,8 +1,8 @@
-- name: install netatalk
+- name: netatalk | install
   apk:
     name: netatalk
 
-- name: start netatalk
+- name: netatalk | start
   service:
     name: netatalk
     state: started

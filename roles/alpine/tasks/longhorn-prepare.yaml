@@ -1,4 +1,4 @@
-- name: install deps
+- name: longhorn | install deps
   become: true
   apk:
     name: "{{item}}"
@@ -12,7 +12,7 @@
   - lsblk
   - util-linux
 
-- name: start iscsi
+- name: longhorn | start iscsi
   become: true
   service:
     name: iscsid

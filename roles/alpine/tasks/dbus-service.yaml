@@ -4,7 +4,7 @@
     name: "{{item}}"
   loop:
   - dbus
-  - dbus-openrc
+  # - dbus-openrc
 
 # 可能存在已失效的 /var/run/dbus.pid 导致启动失败
 - name: dbus | fix pid

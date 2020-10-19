@@ -25,7 +25,7 @@
   copy:
     dest: /etc/conf.d/prometheus
     content: "{{prometheus_service_conf_inline}}"
-  when: prometheus_service_conf_inline is defined
+  when: prometheus_service_conf_inline is defined and prometheus_conf_inline is string
   notify: prometheus-reload
 
 # map conf

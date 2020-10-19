@@ -1,4 +1,4 @@
-- name: load modules
+- name: bbr | load modules
   become: true
   modprobe:
     name: "{{item}}"
@@ -6,7 +6,7 @@
   loop: &modules
   - tcp_bbr
 
-- name: persist mpdules
+- name: bbr | persist modules
   become: true
   lineinfile:
     path: /etc/modules-load.d/tcp_bbr.conf
@@ -14,12 +14,12 @@
     create: true
   loop: *modules
 
-- name: sysctl change tcp congestion
+- name: bbr | sysctl change tcp congestion
   become: true
   sysctl:
-      name: "{{item.name}}"
-      state: present
-      value: "{{item.value}}"
+    name: "{{item.name}}"
+    state: present
+    value: "{{item.value}}"
   loop:
   - {name: net.core.default_qdisc, value: fq}
   - {name: net.ipv4.tcp_congestion_control, value: bbr}

@@ -1,4 +1,4 @@
-- name: tinc preset
+- name: tinc | preset
   block:
     - name: setup facts
       failed_when: tinc_netname is undefined

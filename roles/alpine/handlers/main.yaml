@@ -1,3 +1,6 @@
+# 注意
+# * 不支持 reload 则使用 shell: service privoxy --ifstarted restart 避免服务启动
+
 - name: sshd-restart
   become: true
   service: name=sshd state=restarted
@@ -33,6 +36,9 @@
 - name: docker-restart
   become: true
   service: name=docker state=restarted
+- name: docker-reload
+  become: true
+  service: name=docker state=reloaded
 
 - name: libvirtd-restart
   become: true
@@ -49,16 +55,18 @@
 - name: tinc-restart
   become: true
   # service: name=tincd state=restarted
-  shell: |
-    [ -f /etc/init.d/tincd.{{tinc_netname}} ] &&
-    service tincd.{{tinc_netname}} ||
-    { tinc pid && tinc restart || tinc start; }
+  # shell: |
+  #   [ -f /etc/init.d/tincd.{{tinc_netname}} ] &&
+  #   service tincd.{{tinc_netname}} ||
+  #   { tinc pid && tinc restart || tinc start; }
+  shell: service tincd.{{tinc_netname}} --ifstarted restart
   environment:
     NETNAME: "{{tinc_netname}}"
 - name: tinc-reload
   become: true
   # service: name=tincd state=reloaded
-  shell: tinc -n {{tinc_netname}} reload
+  # shell: tinc -n {{tinc_netname}} reload
+  shell: service tincd.{{tinc_netname}} --ifstarted restart
 
 # not working
 # - name: tinc-restart-{{tinc_netname}}
@@ -117,3 +125,26 @@
 - name: prometheus-reload
   become: true
   service: name=prometheus state=reloaded
+
+- name: samba-reload
+  become: true
+  service: name=samba state=reloaded
+
+- name: haproxy-reload
+  become: true
+  service: name=haproxy state=reloaded
+
+- name: sockd-reload
+  become: true
+  shell: service sockd --ifstarted restart
+
+- name: privoxy-reload
+  become: true
+  shell: service privoxy --ifstarted restart
+- name: tinyproxy-reload
+  become: true
+  shell: service tinyproxy --ifstarted restart
+
+- name: k3s-restart
+  become: true
+  shell: service k3s --ifstarted restart

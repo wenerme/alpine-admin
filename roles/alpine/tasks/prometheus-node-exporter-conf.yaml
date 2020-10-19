@@ -1,12 +1,7 @@
-# todo no package
-# curl -O https://mirrors.tuna.tsinghua.edu.cn/alpine/edge/testing/x86_64/prometheus-node-exporter-1.0.1-r0.apk
-# curl -O https://mirrors.tuna.tsinghua.edu.cn/alpine/edge/testing/x86_64/prometheus-node-exporter-openrc-1.0.1-r0.apk
-# apk add prometheus-node-exporter-1.0.1-r0.apk prometheus-node-exporter-openrc-1.0.1-r0.apk
-
 - name: node-exporter | install
   become: true
   apk:
-    repository: https://mirrors.aliyun.com/alpine/edge/testing/
+    repository: https://mirrors.aliyun.com/alpine/edge/community/
     name: prometheus-node-exporter
 
 # ARGS="--web.listen-address=':9100'"
