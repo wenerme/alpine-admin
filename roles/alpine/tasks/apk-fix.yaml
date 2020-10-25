@@ -1,3 +1,0 @@
-- name: apk fix
-  become: true
-  command: apk fix

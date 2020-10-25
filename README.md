@@ -1,6 +1,23 @@
 # Alpine Admin
 Ansible Role for Alpine Host
 
+* Dependencies
+  * [wenerme/ansible-collection-wenerme-alpine](https://github.com/wenerme/ansible-collection-wenerme-alpine) - Collection of tasks for operation and maintenance AlpineLinux
+
+
+```bash
+git clone https://github.com/wenerme/alpine-admin
+cd alpine-admin
+# ansible env
+docker run --rm -it \
+  -e TZ=Asia/Shanghai \
+  -v $HOME/.ansible:/root/.ansible \
+  -v $PWD:/host -w /host \
+  --name ansible wener/ansible
+# install dependencies
+ansible-galaxy install -r requirement.yml
+```
+
 ## 文件结构
 * credentials - 保存证书等相关内容
   * admin_rsa.pri - 加密后的私钥 - 控制机器需要 ssh-add
@@ -180,6 +197,7 @@ adhoc setup-ops -l node-1
 
 # 节点信息概览 - 系统/CPU/内存/网络
 adhoc host-info
+adhoc resizefs
 ```
 
 ## 使用 Ansible Vault 加密密钥

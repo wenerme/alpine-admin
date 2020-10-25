@@ -13,3 +13,5 @@ admin_rsa*
 # 默认不提交 files 下的内容
 files
 backup
+
+ansible_collections

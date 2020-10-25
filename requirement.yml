@@ -1,0 +1,4 @@
+collections:
+- name: https://github.com/wenerme/ansible-collection-wenerme-alpine.git
+  type: git
+  version: master
